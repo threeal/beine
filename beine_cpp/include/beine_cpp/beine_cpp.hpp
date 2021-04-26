@@ -21,4 +21,6 @@
 #ifndef BEINE_CPP__BEINE_CPP_HPP_
 #define BEINE_CPP__BEINE_CPP_HPP_
 
+#include "./legs/legs_provider.hpp"
+
 #endif  // BEINE_CPP__BEINE_CPP_HPP_
