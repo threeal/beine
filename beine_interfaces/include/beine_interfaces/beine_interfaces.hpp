@@ -18,10 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEIN_INTERFACES__BEIN_INTERFACES_HPP_
-#define BEIN_INTERFACES__BEIN_INTERFACES_HPP_
+#ifndef BEINE_INTERFACES__BEINE_INTERFACES_HPP_
+#define BEINE_INTERFACES__BEINE_INTERFACES_HPP_
 
-#include <bein_interfaces/msg/orientation.hpp>
-#include <bein_interfaces/msg/position.hpp>
+#include <beine_interfaces/msg/orientation.hpp>
+#include <beine_interfaces/msg/position.hpp>
 
-#endif  // BEIN_INTERFACES__BEIN_INTERFACES_HPP_
+#endif  // BEINE_INTERFACES__BEINE_INTERFACES_HPP_

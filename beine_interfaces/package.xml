@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>bein_interfaces</name>
+  <name>beine_interfaces</name>
   <version>0.1.0</version>
-  <description>ROS 2 interfaces for Bein leg reinforcement package</description>
+  <description>ROS 2 interfaces for Beine leg support project</description>
   <maintainer email="alfi.maulana.f@gmail.com">Alfi Maulana</maintainer>
   <license>MIT License</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <build_depend>rosidl_default_generator</build_depend>
-  <exec_depend>rosidl_default_runtime</exec_depend>
+  <buildtool_depend>rosidl_default_generator</buildtool_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
   <member_of_group>rosidl_interface_packages</member_of_group>
   <export>
     <build_type>ament_cmake</build_type>

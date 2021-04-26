@@ -1,11 +1,12 @@
-# Bein Interfaces
+# Beine
 
-[![latest version](https://img.shields.io/github/v/release/threeal/bein_interfaces.svg)](https://github.com/threeal/bein_interfaces/releases/)
-[![license](https://img.shields.io/github/license/threeal/bein_interfaces.svg)](./LICENSE)
-[![build and test status](https://github.com/threeal/bein_interfaces/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/threeal/bein_interfaces/actions)
+[![latest version](https://img.shields.io/github/v/release/threeal/beine)](https://github.com/threeal/beine/releases/)
+[![milestone](https://img.shields.io/github/milestones/progress/threeal/beine/1?label=milestone)](https://github.com/threeal/beine/milestone/1)
+[![license](https://img.shields.io/github/license/threeal/beine)](./LICENSE)
+[![test status](https://img.shields.io/github/workflow/status/threeal/beine/Build%20and%20Test?label=test)](https://github.com/threeal/beine/actions)
 
-This package provides ROS 2 interfaces for [Bein](https://github.com/threeal/bein_bridge) legs reinforcement project.
+Beine is a [ROS 2](https://docs.ros.org/en/foxy/index.html) project that provides leg support packages.
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+This project is maintained by [Alfi Maulana](https://github.com/threeal) and licensed under [the MIT License](./LICENSE).
