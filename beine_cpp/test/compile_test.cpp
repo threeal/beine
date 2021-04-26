@@ -19,9 +19,9 @@
 // THE SOFTWARE.
 
 #include <gtest/gtest.h>
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <beine_cpp/beine_cpp.hpp>
 
-TEST(HeaderTest, All) {
-  beine_interfaces::msg::Orientation orientation;
-  beine_interfaces::msg::Position position;
+TEST(CompileTest, All) {
+  beine_cpp::LegsConsumer legs_consumer;
+  beine_cpp::LegsProvider legs_provider;
 }

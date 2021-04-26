@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(beine_interfaces)
+project(beine_cpp)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -15,11 +15,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Orientation.msg"
-  "msg/Position.msg")
+find_package(beine_interfaces REQUIRED)
+find_package(rclcpp REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
@@ -34,13 +31,12 @@ if(BUILD_TESTING)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 
-  rosidl_target_interfaces(${PROJECT_NAME}_tests
-    ${PROJECT_NAME} "rosidl_typesupport_cpp")
+  ament_target_dependencies(${PROJECT_NAME}_tests beine_interfaces rclcpp)
 
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_dependencies(rosidl_default_runtime)
+ament_export_dependencies(beine_interfaces rclcpp)
 ament_export_include_directories("include")
 
 ament_package()
