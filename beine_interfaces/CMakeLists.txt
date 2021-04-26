@@ -28,7 +28,7 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
 
   ament_add_gtest(${PROJECT_NAME}_tests
-    "test/header_test.cpp")
+    "test/compile_test.cpp")
 
   target_include_directories(${PROJECT_NAME}_tests PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

@@ -21,7 +21,7 @@
 #include <gtest/gtest.h>
 #include <beine_interfaces/beine_interfaces.hpp>
 
-TEST(HeaderTest, All) {
+TEST(CompileTest, All) {
   beine_interfaces::msg::Orientation orientation;
   beine_interfaces::msg::Position position;
 }
