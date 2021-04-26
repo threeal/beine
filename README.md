@@ -1,4 +1,4 @@
-# Bein Interfaces
+# Beine Interfaces
 
 [![latest version](https://img.shields.io/github/v/release/threeal/bein_interfaces.svg)](https://github.com/threeal/bein_interfaces/releases/)
 [![license](https://img.shields.io/github/license/threeal/bein_interfaces.svg)](./LICENSE)

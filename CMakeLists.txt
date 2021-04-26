@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(bein_interfaces)
+project(beine_interfaces)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -30,4 +30,5 @@ endif()
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_export_include_directories("include")
+
 ament_package()
