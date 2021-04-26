@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
-#define BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#ifndef BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
+#define BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <beine_interfaces/beine_interfaces.hpp>
@@ -32,78 +32,88 @@ namespace beine_cpp
 using Orientation = beine_interfaces::msg::Orientation;
 using Position = beine_interfaces::msg::Position;
 
-class LegsProvider
+class LegsConsumer
 {
 public:
-  inline LegsProvider();
-  inline explicit LegsProvider(rclcpp::Node::SharedPtr node);
+  inline LegsConsumer();
+  inline explicit LegsConsumer(rclcpp::Node::SharedPtr node);
 
   inline void set_node(rclcpp::Node::SharedPtr node);
 
-  inline void set_position(const Position & position);
-  inline void set_orientation(const Orientation & orientation);
-
   inline rclcpp::Node::SharedPtr get_node();
+
+  inline const Position & get_position();
+  inline const Orientation & get_orientation();
 
 private:
   rclcpp::Node::SharedPtr node;
 
-  rclcpp::Publisher<Position>::SharedPtr position_publisher;
-  rclcpp::Publisher<Orientation>::SharedPtr orientation_publisher;
+  rclcpp::Subscription<Position>::SharedPtr position_subscription;
+  rclcpp::Subscription<Orientation>::SharedPtr orientation_subscription;
+
+  Position current_position;
+  Orientation current_orientation;
 };
 
-LegsProvider::LegsProvider()
+LegsConsumer::LegsConsumer()
 {
 }
 
-LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node)
-: LegsProvider()
+LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node)
+: LegsConsumer()
 {
   set_node(node);
 }
 
-void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
+void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
 {
   // Initialize the node
   this->node = node;
 
-  // Initialize the position publisher
+  // Initialize the position subscription
   {
-    position_publisher = get_node()->create_publisher<Position>("/legs/position", 10);
+    position_subscription = get_node()->create_subscription<Position>(
+      "/legs/position", 10,
+      [this](const Position::SharedPtr position) {
+        current_position = *position;
+      });
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Position publisher initialized on " <<
-        position_publisher->get_topic_name() << "!");
+      "Position subscription initialized on " <<
+        position_subscription->get_topic_name() << "!");
   }
 
-  // Initialize the orientation publisher
+  // Initialize the orientation subscription
   {
-    orientation_publisher = get_node()->create_publisher<Orientation>(
-      "/legs/orientation", 10);
+    orientation_subscription = get_node()->create_subscription<Orientation>(
+      "/legs/orientation", 10,
+      [this](const Orientation::SharedPtr orientation) {
+        current_orientation = *orientation;
+      });
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Orientation publisher initialized on " <<
-        orientation_publisher->get_topic_name() << "!");
+      "Orientation subscription initialized on " <<
+        orientation_subscription->get_topic_name() << "!");
   }
 }
 
-void LegsProvider::set_position(const Position & position)
-{
-  position_publisher->publish(position);
-}
-
-void LegsProvider::set_orientation(const Orientation & orientation)
-{
-  orientation_publisher->publish(orientation);
-}
-
-rclcpp::Node::SharedPtr LegsProvider::get_node()
+rclcpp::Node::SharedPtr LegsConsumer::get_node()
 {
   return node;
 }
 
+const Position & LegsConsumer::get_position()
+{
+  return current_position;
+}
+
+const Orientation & LegsConsumer::get_orientation()
+{
+  return current_orientation;
+}
+
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#endif  // BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_

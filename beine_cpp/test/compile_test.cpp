@@ -22,5 +22,6 @@
 #include <beine_cpp/beine_cpp.hpp>
 
 TEST(CompileTest, All) {
+  beine_cpp::LegsConsumer legs_consumer;
   beine_cpp::LegsProvider legs_provider;
 }
