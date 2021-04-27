@@ -18,19 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
-#define BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
+#ifndef BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_
+#define BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
-#include <beine_interfaces/beine_interfaces.hpp>
 
-#include <memory>
+#include <string>
+
+#include "../utility.hpp"
 
 namespace beine_cpp
 {
-
-using Orientation = beine_interfaces::msg::Orientation;
-using Position = beine_interfaces::msg::Position;
 
 class LegsConsumer
 {
@@ -40,19 +38,25 @@ public:
 
   inline void set_node(rclcpp::Node::SharedPtr node);
 
-  inline rclcpp::Node::SharedPtr get_node();
+  inline rclcpp::Node::SharedPtr get_node() const;
 
-  inline const Position & get_position();
-  inline const Orientation & get_orientation();
+  inline const Position & get_position() const;
+  inline const Orientation & get_orientation() const;
+  inline const Stance & get_stance() const;
+  inline const std::string & get_command() const;
 
 private:
   rclcpp::Node::SharedPtr node;
 
   rclcpp::Subscription<Position>::SharedPtr position_subscription;
   rclcpp::Subscription<Orientation>::SharedPtr orientation_subscription;
+  rclcpp::Subscription<StanceMsg>::SharedPtr stance_subscription;
+  rclcpp::Subscription<StringMsg>::SharedPtr command_subscription;
 
   Position current_position;
   Orientation current_orientation;
+  Stance current_stance;
+  std::string current_command;
 };
 
 LegsConsumer::LegsConsumer()
@@ -97,23 +101,61 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
       "Orientation subscription initialized on " <<
         orientation_subscription->get_topic_name() << "!");
   }
+
+  // Initialize the stance subscription
+  {
+    stance_subscription = get_node()->create_subscription<StanceMsg>(
+      "/legs/stance", 10,
+      [this](const StanceMsg::SharedPtr msg) {
+        current_stance = Stance(*msg);
+      });
+
+    RCLCPP_INFO_STREAM(
+      get_node()->get_logger(),
+      "Stance subscription initialized on " <<
+        stance_subscription->get_topic_name() << "!");
+  }
+
+  // Initialize the command subscription
+  {
+    command_subscription = get_node()->create_subscription<StringMsg>(
+      "/legs/command", 10,
+      [this](const StringMsg::SharedPtr msg) {
+        current_command = msg->data;
+      });
+
+    RCLCPP_INFO_STREAM(
+      get_node()->get_logger(),
+      "Command subscription initialized on " <<
+        command_subscription->get_topic_name() << "!");
+  }
 }
 
-rclcpp::Node::SharedPtr LegsConsumer::get_node()
+rclcpp::Node::SharedPtr LegsConsumer::get_node() const
 {
   return node;
 }
 
-const Position & LegsConsumer::get_position()
+const Position & LegsConsumer::get_position() const
 {
   return current_position;
 }
 
-const Orientation & LegsConsumer::get_orientation()
+const Orientation & LegsConsumer::get_orientation() const
 {
   return current_orientation;
 }
 
+const Stance & LegsConsumer::get_stance() const
+{
+  return current_stance;
+}
+
+const std::string & LegsConsumer::get_command() const
+{
+  return current_command;
+}
+
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
+#endif  // BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_

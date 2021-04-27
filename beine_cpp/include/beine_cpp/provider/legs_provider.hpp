@@ -18,19 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
-#define BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#ifndef BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_
+#define BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
-#include <beine_interfaces/beine_interfaces.hpp>
 
-#include <memory>
+#include <string>
+
+#include "../utility.hpp"
 
 namespace beine_cpp
 {
-
-using Orientation = beine_interfaces::msg::Orientation;
-using Position = beine_interfaces::msg::Position;
 
 class LegsProvider
 {
@@ -42,14 +40,18 @@ public:
 
   inline void set_position(const Position & position);
   inline void set_orientation(const Orientation & orientation);
+  inline void set_joints(const Joints & joints);
+  inline void set_command(const std::string & command);
 
-  inline rclcpp::Node::SharedPtr get_node();
+  inline rclcpp::Node::SharedPtr get_node() const;
 
 private:
   rclcpp::Node::SharedPtr node;
 
   rclcpp::Publisher<Position>::SharedPtr position_publisher;
   rclcpp::Publisher<Orientation>::SharedPtr orientation_publisher;
+  rclcpp::Publisher<Joints>::SharedPtr joints_publisher;
+  rclcpp::Publisher<StringMsg>::SharedPtr command_publisher;
 };
 
 LegsProvider::LegsProvider()
@@ -87,6 +89,17 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
       "Orientation publisher initialized on " <<
         orientation_publisher->get_topic_name() << "!");
   }
+
+  // Initialize the joints publisher
+  {
+    joints_publisher = get_node()->create_publisher<Joints>(
+      "/legs/joints", 10);
+
+    RCLCPP_INFO_STREAM(
+      get_node()->get_logger(),
+      "Joints publisher initialized on " <<
+        joints_publisher->get_topic_name() << "!");
+  }
 }
 
 void LegsProvider::set_position(const Position & position)
@@ -99,11 +112,24 @@ void LegsProvider::set_orientation(const Orientation & orientation)
   orientation_publisher->publish(orientation);
 }
 
-rclcpp::Node::SharedPtr LegsProvider::get_node()
+void LegsProvider::set_joints(const Joints & joints)
+{
+  joints_publisher->publish(joints);
+}
+
+void LegsProvider::set_command(const std::string & command)
+{
+  StringMsg msg;
+  msg.data = command;
+
+  command_publisher->publish(msg);
+}
+
+rclcpp::Node::SharedPtr LegsProvider::get_node() const
 {
   return node;
 }
 
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#endif  // BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_

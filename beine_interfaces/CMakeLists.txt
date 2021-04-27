@@ -18,8 +18,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/Joints.msg"
   "msg/Orientation.msg"
-  "msg/Position.msg")
+  "msg/Position.msg"
+  "msg/Stance.msg")
 
 install(DIRECTORY "include" DESTINATION ".")
 
