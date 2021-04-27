@@ -140,19 +140,19 @@ int main(int argc, char ** argv)
       RCLCPP_INFO_STREAM(
         node->get_logger(),
         std::fixed << std::setprecision(1) <<
-          "\n\nPosition\t: " << position.x << " " << position.y << " " << position.z <<
-          "\nOrientation\t: " << orientation.x << " " << orientation.y << " " << orientation.z <<
+          "\n\nPosition\t: " << position <<
+          "\nOrientation\t: " << orientation <<
           "\n\nAnkle Joints\t: " << joints.left_knee << " " << joints.right_knee <<
           "\nKneeJoints\t: " << joints.left_ankle << " " << joints.right_ankle <<
           "\n\nCommand\t: \"" << command << "\"" <<
           "\n\nW/S -> position x\tA/D -> position y\tQ/E -> orientation z" <<
           "\nI/O -> knee joints\tK/L -> ankle joints\tC -> enter command input");
 
-        // Set new data
-        legs_provider->set_position(position);
-        legs_provider->set_orientation(orientation);
-        legs_provider->set_joints(joints);
-        legs_provider->set_command(command);
+      // Set new data
+      legs_provider->set_position(position);
+      legs_provider->set_orientation(orientation);
+      legs_provider->set_joints(joints);
+      legs_provider->set_command(command);
     });
 
   update_timer->reset();

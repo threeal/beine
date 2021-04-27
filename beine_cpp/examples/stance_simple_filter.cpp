@@ -51,19 +51,7 @@ int main(int argc, char ** argv)
 
       if (stance.get_state() != prev_stance.get_state()) {
         prev_stance = stance;
-
-        std::string stance_name;
-        switch (stance.get_state()) {
-          case beine_cpp::Stance::State::STANDING:
-            stance_name = "Standing";
-            break;
-
-          case beine_cpp::Stance::State::SITTING:
-            stance_name = "Sitting";
-            break;
-        }
-
-        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance_name << "!");
+        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance << "!");
       }
 
       stance_provider->set_stance(stance);

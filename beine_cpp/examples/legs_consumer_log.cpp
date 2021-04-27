@@ -39,29 +39,15 @@ int main(int argc, char ** argv)
 
   auto update_timer = node->create_wall_timer(
     100ms, [&]() {
-      auto position = legs_consumer->get_position();
-      auto orientation = legs_consumer->get_orientation();
-
-      std::string stance_name;
-      switch (legs_consumer->get_stance().get_state()) {
-        case beine_cpp::Stance::State::STANDING:
-          stance_name = "Standing";
-          break;
-
-        case beine_cpp::Stance::State::SITTING:
-          stance_name = "Sitting";
-          break;
-      }
-
       // Clear screen
       std::cout << "\033[2J\033[2H" << std::endl;
 
       RCLCPP_INFO_STREAM(
         node->get_logger(),
         std::fixed << std::setprecision(1) <<
-          "\n\nPosition\t: " << position.x << " " << position.y << " " << position.z <<
-          "\nOrientation\t: " << orientation.x << " " << orientation.y << " " << orientation.z <<
-          "\n\nStance\t: " << stance_name <<
+          "\n\nPosition\t: " << legs_consumer->get_position() <<
+          "\nOrientation\t: " << legs_consumer->get_orientation() <<
+          "\n\nStance\t: " << legs_consumer->get_stance() <<
           "\nCommand\t: \"" << legs_consumer->get_command() << "\"");
     });
 

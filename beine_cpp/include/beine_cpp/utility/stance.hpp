@@ -119,4 +119,19 @@ bool Stance::is_sitting() const
 
 }  // namespace beine_cpp
 
+inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Stance & stance)
+{
+  switch (stance.get_state()) {
+    case beine_cpp::Stance::State::STANDING:
+      out << "Standing";
+      break;
+
+    case beine_cpp::Stance::State::SITTING:
+      out << "Sitting";
+      break;
+  }
+
+  return out;
+}
+
 #endif  // BEINE_CPP__UTILITY__STANCE_HPP_

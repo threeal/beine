@@ -36,4 +36,14 @@ using StringMsg = std_msgs::msg::String;
 
 }  // namespace beine_cpp
 
+inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation)
+{
+  return out << orientation.x << ", " << orientation.y << ", " << orientation.z;
+}
+
+inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position)
+{
+  return out << position.x << ", " << position.y << ", " << position.z;
+}
+
 #endif  // BEINE_CPP__UTILITY_HPP_
