@@ -67,8 +67,7 @@ void StanceProvider::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Stance publisher initialized on " <<
-        stance_publisher->get_topic_name() << "!");
+      "Stance publisher initialized on " << stance_publisher->get_topic_name() << "!");
   }
 }
 

@@ -84,8 +84,7 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Position subscription initialized on " <<
-        position_subscription->get_topic_name() << "!");
+      "Position subscription initialized on " << position_subscription->get_topic_name() << "!");
   }
 
   // Initialize the orientation subscription
@@ -112,8 +111,7 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Stance subscription initialized on " <<
-        stance_subscription->get_topic_name() << "!");
+      "Stance subscription initialized on " << stance_subscription->get_topic_name() << "!");
   }
 
   // Initialize the command subscription
@@ -126,8 +124,7 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Command subscription initialized on " <<
-        command_subscription->get_topic_name() << "!");
+      "Command subscription initialized on " << command_subscription->get_topic_name() << "!");
   }
 }
 

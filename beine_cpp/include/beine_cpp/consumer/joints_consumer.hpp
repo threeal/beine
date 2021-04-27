@@ -73,8 +73,7 @@ void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Joints subscription initialized on " <<
-        joints_subscription->get_topic_name() << "!");
+      "Joints subscription initialized on " << joints_subscription->get_topic_name() << "!");
   }
 }
 

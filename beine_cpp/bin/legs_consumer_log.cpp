@@ -21,6 +21,7 @@
 #include <beine_cpp/beine_cpp.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <iomanip>
 #include <memory>
 #include <string>
 
@@ -31,21 +32,24 @@ int main(int argc, char ** argv)
   rclcpp::init(argc, argv);
 
   auto node = std::make_shared<rclcpp::Node>("legs_consumer_log");
-  auto leg_consumer = std::make_shared<beine_cpp::LegsConsumer>(node);
+  auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node);
 
   auto update_timer = node->create_wall_timer(
-    100ms, [leg_consumer]() {
+    100ms, [&]() {
       // Clear screen
       std::cout << "\033[2J\033[2H" << std::endl;
 
-      auto position = leg_consumer->get_position();
+      // Set number precision
+      std::cout << std::fixed << std::setprecision(1);
+
+      auto position = legs_consumer->get_position();
 
       std::cout << "Position: " <<
         position.x << " " <<
         position.y << " " <<
         position.z << std::endl;
 
-      auto orientation = leg_consumer->get_orientation();
+      auto orientation = legs_consumer->get_orientation();
 
       std::cout << "Orientation: " <<
         orientation.x << " " <<
@@ -54,7 +58,7 @@ int main(int argc, char ** argv)
 
       std::cout << std::endl;
 
-      auto stance = leg_consumer->get_stance();
+      auto stance = legs_consumer->get_stance();
 
       std::string stance_string;
       switch (stance.get_state()) {
@@ -68,7 +72,7 @@ int main(int argc, char ** argv)
       }
 
       std::cout << "Stance: " << stance_string << std::endl;
-      std::cout << "Command: " << leg_consumer->get_command() << std::endl;
+      std::cout << "Command: " << legs_consumer->get_command() << std::endl;
     });
 
   update_timer->reset();

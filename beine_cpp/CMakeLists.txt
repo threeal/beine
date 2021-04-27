@@ -22,16 +22,19 @@ find_package(std_msgs REQUIRED)
 install(DIRECTORY "include" DESTINATION ".")
 
 add_executable(legs_consumer_log "bin/legs_consumer_log.cpp")
+add_executable(legs_provider_dummy "bin/legs_provider_dummy.cpp")
 
-target_include_directories(legs_consumer_log PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+foreach(target legs_consumer_log legs_provider_dummy)
+  target_include_directories(${target} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
 
-ament_target_dependencies(legs_consumer_log
-  beine_interfaces rclcpp std_msgs)
+  ament_target_dependencies(${target}
+    beine_interfaces rclcpp std_msgs)
 
-install(TARGETS legs_consumer_log
-  DESTINATION "lib/${PROJECT_NAME}")
+  install(TARGETS ${target}
+    DESTINATION "lib/${PROJECT_NAME}")
+endforeach()
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)

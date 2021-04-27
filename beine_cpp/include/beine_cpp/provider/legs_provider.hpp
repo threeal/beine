@@ -75,30 +75,34 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Position publisher initialized on " <<
-        position_publisher->get_topic_name() << "!");
+      "Position publisher initialized on " << position_publisher->get_topic_name() << "!");
   }
 
   // Initialize the orientation publisher
   {
-    orientation_publisher = get_node()->create_publisher<Orientation>(
-      "/legs/orientation", 10);
+    orientation_publisher = get_node()->create_publisher<Orientation>("/legs/orientation", 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Orientation publisher initialized on " <<
-        orientation_publisher->get_topic_name() << "!");
+      "Orientation publisher initialized on " << orientation_publisher->get_topic_name() << "!");
   }
 
   // Initialize the joints publisher
   {
-    joints_publisher = get_node()->create_publisher<Joints>(
-      "/legs/joints", 10);
+    joints_publisher = get_node()->create_publisher<Joints>("/legs/joints", 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Joints publisher initialized on " <<
-        joints_publisher->get_topic_name() << "!");
+      "Joints publisher initialized on " << joints_publisher->get_topic_name() << "!");
+  }
+
+  // Initialize the command publisher
+  {
+    command_publisher = get_node()->create_publisher<StringMsg>("/legs/command", 10);
+
+    RCLCPP_INFO_STREAM(
+      get_node()->get_logger(),
+      "Command publisher initialized on " << command_publisher->get_topic_name() << "!");
   }
 }
 
