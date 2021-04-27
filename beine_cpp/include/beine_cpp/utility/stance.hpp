@@ -75,11 +75,12 @@ Stance::operator StanceMsg() const
   StanceMsg msg;
 
   switch (get_state()) {
-    case State::SITTING:
-      msg.sitting = true;
+    case State::STANDING:
+      msg.sitting = false;
       break;
 
-    default:
+    case State::SITTING:
+      msg.sitting = true;
       break;
   }
 
