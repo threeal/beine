@@ -143,7 +143,7 @@ int main(int argc, char ** argv)
           "\n\nPosition\t: " << position <<
           "\nOrientation\t: " << orientation <<
           "\n\nAnkle Joints\t: " << joints.left_knee << " " << joints.right_knee <<
-          "\nKneeJoints\t: " << joints.left_ankle << " " << joints.right_ankle <<
+          "\nKnee Joints\t: " << joints.left_ankle << " " << joints.right_ankle <<
           "\n\nCommand\t: \"" << command << "\"" <<
           "\n\nW/S -> position x\tA/D -> position y\tQ/E -> orientation z" <<
           "\nI/O -> knee joints\tK/L -> ankle joints\tC -> enter command input");
