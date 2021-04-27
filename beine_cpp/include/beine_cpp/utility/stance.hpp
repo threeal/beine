@@ -38,7 +38,7 @@ public:
   };
 
   inline Stance();
-  inline Stance(const StanceMsg & msg);
+  inline explicit Stance(const StanceMsg & msg);
 
   inline operator StanceMsg() const;
 
@@ -57,7 +57,7 @@ private:
 };
 
 Stance::Stance()
-: state(State::SITTING)
+: state(State::STANDING)
 {
 }
 
@@ -91,14 +91,14 @@ void Stance::set_state(Stance::State state)
   this->state = state;
 }
 
-void Stance::make_sitting()
-{
-  set_state(State::SITTING);
-}
-
 void Stance::make_standing()
 {
   set_state(State::STANDING);
+}
+
+void Stance::make_sitting()
+{
+  set_state(State::SITTING);
 }
 
 Stance::State Stance::get_state() const

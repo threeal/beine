@@ -21,6 +21,7 @@
 #ifndef BEINE_CPP__BEINE_CPP_HPP_
 #define BEINE_CPP__BEINE_CPP_HPP_
 
+#include "./legs/joints_consumer.hpp"
 #include "./legs/legs_consumer.hpp"
 #include "./legs/legs_provider.hpp"
 #include "./legs/stance_provider.hpp"

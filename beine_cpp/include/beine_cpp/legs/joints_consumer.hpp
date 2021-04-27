@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__STANCE_PROVIDER_HPP_
-#define BEINE_CPP__LEGS__STANCE_PROVIDER_HPP_
+#ifndef BEINE_CPP__LEGS__JOINTS_CONSUMER_HPP_
+#define BEINE_CPP__LEGS__JOINTS_CONSUMER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -28,60 +28,66 @@
 namespace beine_cpp
 {
 
-class StanceProvider
+class JointsConsumer
 {
 public:
-  inline StanceProvider();
-  inline explicit StanceProvider(rclcpp::Node::SharedPtr node);
+  inline JointsConsumer();
+  inline explicit JointsConsumer(rclcpp::Node::SharedPtr node);
 
   inline void set_node(rclcpp::Node::SharedPtr node);
 
-  inline void set_stance(Stance stance);
+  inline rclcpp::Node::SharedPtr get_node() const;
 
-  inline rclcpp::Node::SharedPtr get_node();
+  inline const Joints & get_joints() const;
 
 private:
   rclcpp::Node::SharedPtr node;
 
-  rclcpp::Publisher<StanceMsg>::SharedPtr stance_publisher;
+  rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
+
+  Joints current_joints;
 };
 
-StanceProvider::StanceProvider()
+JointsConsumer::JointsConsumer()
 {
 }
 
-StanceProvider::StanceProvider(rclcpp::Node::SharedPtr node)
-: StanceProvider()
+JointsConsumer::JointsConsumer(rclcpp::Node::SharedPtr node)
+: JointsConsumer()
 {
   set_node(node);
 }
 
-void StanceProvider::set_node(rclcpp::Node::SharedPtr node)
+void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
 {
   // Initialize the node
   this->node = node;
 
-  // Initialize the stance publisher
+  // Initialize the joints subscription
   {
-    stance_publisher = get_node()->create_publisher<StanceMsg>("/legs/stance", 10);
+    joints_subscription = get_node()->create_subscription<Joints>(
+      "/legs/joints", 10,
+      [this](const Joints::SharedPtr joints) {
+        current_joints = *joints;
+      });
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Stance publisher initialized on " <<
-        stance_publisher->get_topic_name() << "!");
+      "Joints subscription initialized on " <<
+        joints_subscription->get_topic_name() << "!");
   }
 }
 
-void StanceProvider::set_stance(Stance stance)
-{
-  stance_publisher->publish(stance);
-}
-
-rclcpp::Node::SharedPtr StanceProvider::get_node()
+rclcpp::Node::SharedPtr JointsConsumer::get_node() const
 {
   return node;
 }
 
+const Joints & JointsConsumer::get_joints() const
+{
+  return current_joints;
+}
+
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__STANCE_PROVIDER_HPP_
+#endif  // BEINE_CPP__LEGS__JOINTS_CONSUMER_HPP_

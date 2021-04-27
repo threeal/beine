@@ -37,7 +37,7 @@ TEST(StanceTest, FromMsg) {
   beine_cpp::StanceMsg msg;
   msg.sitting = true;
 
-  beine_cpp::Stance stance = msg;
+  beine_cpp::Stance stance(msg);
   ASSERT_TRUE(stance.is_sitting());
 }
 
@@ -45,6 +45,6 @@ TEST(StanceTest, ToMsg) {
   beine_cpp::Stance stance;
   stance.make_sitting();
 
-  beine_cpp::StanceMsg msg = stance;
+  beine_cpp::StanceMsg msg(stance);
   ASSERT_TRUE(msg.sitting);
 }

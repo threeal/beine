@@ -22,6 +22,7 @@
 #include <beine_cpp/beine_cpp.hpp>
 
 TEST(CompileTest, All) {
+  beine_cpp::JointsConsumer();
   beine_cpp::LegsConsumer();
   beine_cpp::LegsProvider();
   beine_cpp::StanceProvider();

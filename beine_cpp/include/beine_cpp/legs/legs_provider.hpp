@@ -23,7 +23,6 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <memory>
 #include <string>
 
 #include "../utility.hpp"

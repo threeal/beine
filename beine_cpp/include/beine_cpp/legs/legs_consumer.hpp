@@ -23,7 +23,6 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <memory>
 #include <string>
 
 #include "../utility.hpp"
@@ -108,7 +107,7 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
     stance_subscription = get_node()->create_subscription<StanceMsg>(
       "/legs/stance", 10,
       [this](const StanceMsg::SharedPtr msg) {
-        current_stance = *msg;
+        current_stance = Stance(*msg);
       });
 
     RCLCPP_INFO_STREAM(
