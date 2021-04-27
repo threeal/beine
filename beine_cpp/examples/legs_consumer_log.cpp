@@ -34,45 +34,35 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("legs_consumer_log");
   auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node);
 
+  RCLCPP_INFO(node->get_logger(), "Press enter to continue");
+  std::cin.get();
+
   auto update_timer = node->create_wall_timer(
     100ms, [&]() {
-      // Clear screen
-      std::cout << "\033[2J\033[2H" << std::endl;
-
-      // Set number precision
-      std::cout << std::fixed << std::setprecision(1);
-
       auto position = legs_consumer->get_position();
-
-      std::cout << "Position: " <<
-        position.x << " " <<
-        position.y << " " <<
-        position.z << std::endl;
-
       auto orientation = legs_consumer->get_orientation();
 
-      std::cout << "Orientation: " <<
-        orientation.x << " " <<
-        orientation.y << " " <<
-        orientation.z << std::endl;
-
-      std::cout << std::endl;
-
-      auto stance = legs_consumer->get_stance();
-
-      std::string stance_string;
-      switch (stance.get_state()) {
+      std::string stance_name;
+      switch (legs_consumer->get_stance().get_state()) {
         case beine_cpp::Stance::State::STANDING:
-          stance_string = "Standing";
+          stance_name = "Standing";
           break;
 
         case beine_cpp::Stance::State::SITTING:
-          stance_string = "Sitting";
+          stance_name = "Sitting";
           break;
       }
 
-      std::cout << "Stance: " << stance_string << std::endl;
-      std::cout << "Command: " << legs_consumer->get_command() << std::endl;
+      // Clear screen
+      std::cout << "\033[2J\033[2H" << std::endl;
+
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        std::fixed << std::setprecision(1) <<
+          "\n\nPosition\t: " << position.x << " " << position.y << " " << position.z <<
+          "\nOrientation\t: " << orientation.x << " " << orientation.y << " " << orientation.z <<
+          "\n\nStance\t: " << stance_name <<
+          "\nCommand\t: \"" << legs_consumer->get_command() << "\"");
     });
 
   update_timer->reset();

@@ -42,15 +42,20 @@ int main(int argc, char ** argv)
 
   beine_cpp::Position position;
   beine_cpp::Orientation orientation;
-  beine_cpp::Joints joints;
-  std::string command;
 
-  bool input_command = false;
+  beine_cpp::Joints joints;
+  joints.left_knee = 180.0;
+  joints.right_knee = 180.0;
+  joints.left_ankle = 90.0;
+  joints.right_ankle = 90.0;
+
+  std::string command;
 
   // Get the original terminal configuration
   struct termios original_term;
   tcgetattr(STDIN, &original_term);
 
+  // create a non-blocking terminal configuration
   struct termios nonblock_term = original_term;
   nonblock_term.c_lflag &= ~ICANON;
   nonblock_term.c_lflag &= ~ECHO;
@@ -58,79 +63,71 @@ int main(int argc, char ** argv)
   nonblock_term.c_cc[VMIN] = 0;
   nonblock_term.c_cc[VTIME] = 0;
 
+  RCLCPP_INFO(node->get_logger(), "Press enter to continue");
+  std::cin.get();
+
   auto update_timer = node->create_wall_timer(
     100ms, [&]() {
-      char input;
-
       // Modify the terminal configuration
       tcsetattr(STDIN, TCSANOW, &nonblock_term);
 
       // Handle keyboard input
+      char input;
       while (read(STDIN, &input, 1) > 0) {
-        if (input_command) {
-          if (input == '\n') {
-            input_command = false;
-            legs_provider->set_command(command);
-          } else {
-            command += input;
-          }
-        } else {
-          std::cout << input << std::endl;
-          switch (toupper(input)) {
-            case 'W':
-              position.x += 0.1;
-              break;
+        switch (toupper(input)) {
+          case 'W':
+            position.x += 0.1;
+            break;
 
-            case 'S':
-              position.x -= 0.1;
-              break;
+          case 'S':
+            position.x -= 0.1;
+            break;
 
-            case 'A':
-              position.y += 0.1;
-              break;
+          case 'A':
+            position.y += 0.1;
+            break;
 
-            case 'D':
-              position.y -= 0.1;
-              break;
+          case 'D':
+            position.y -= 0.1;
+            break;
 
-            case 'Q':
-              orientation.z += 10.0;
-              break;
+          case 'Q':
+            orientation.z += 10.0;
+            break;
 
-            case 'E':
-              orientation.z -= 10.0;
-              break;
+          case 'E':
+            orientation.z -= 10.0;
+            break;
 
-            case 'O':
-              joints.left_knee = std::max(joints.left_knee - 10.0, 0.0);
-              joints.right_knee = std::max(joints.right_knee - 10.0, 0.0);
-              break;
+          case 'I':
+            joints.left_knee = std::max(joints.left_knee - 10.0, 0.0);
+            joints.right_knee = std::max(joints.right_knee - 10.0, 0.0);
+            break;
 
-            case 'P':
-              joints.left_knee = std::min(joints.left_knee + 10.0, 180.0);
-              joints.right_knee = std::min(joints.right_knee + 10.0, 180.0);
-              break;
+          case 'O':
+            joints.left_knee = std::min(joints.left_knee + 10.0, 180.0);
+            joints.right_knee = std::min(joints.right_knee + 10.0, 180.0);
+            break;
 
-            case 'K':
-              joints.left_ankle = std::max(joints.left_ankle - 10.0, 0.0);
-              joints.right_ankle = std::max(joints.right_ankle - 10.0, 0.0);
-              break;
+          case 'K':
+            joints.left_ankle = std::max(joints.left_ankle - 10.0, 0.0);
+            joints.right_ankle = std::max(joints.right_ankle - 10.0, 0.0);
+            break;
 
-            case 'L':
-              joints.left_ankle = std::min(joints.left_ankle + 10.0, 90.0);
-              joints.right_ankle = std::min(joints.right_ankle + 10.0, 90.0);
-              break;
+          case 'L':
+            joints.left_ankle = std::min(joints.left_ankle + 10.0, 90.0);
+            joints.right_ankle = std::min(joints.right_ankle + 10.0, 90.0);
+            break;
 
-            case 'I':
-              command = "";
-              input_command = true;
-              break;
-          }
+          case 'C':
+            // Temporarely reset the terminal configuration
+            tcsetattr(STDIN, TCSANOW, &original_term);
 
-          // Set new data
-          legs_provider->set_position(position);
-          legs_provider->set_orientation(orientation);
-          legs_provider->set_joints(joints);
+            RCLCPP_INFO(node->get_logger(), "Input a new command:");
+            std::getline(std::cin, command);
+
+            tcsetattr(STDIN, TCSANOW, &nonblock_term);
+            break;
         }
       }
 
@@ -140,45 +137,22 @@ int main(int argc, char ** argv)
       // Clear screen
       std::cout << "\033[2J\033[2H" << std::endl;
 
-      // Set number precision
-      std::cout << std::fixed << std::setprecision(1);
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        std::fixed << std::setprecision(1) <<
+          "\n\nPosition\t: " << position.x << " " << position.y << " " << position.z <<
+          "\nOrientation\t: " << orientation.x << " " << orientation.y << " " << orientation.z <<
+          "\n\nAnkle Joints\t: " << joints.left_knee << " " << joints.right_knee <<
+          "\nKneeJoints\t: " << joints.left_ankle << " " << joints.right_ankle <<
+          "\n\nCommand\t: \"" << command << "\"" <<
+          "\n\nW/S -> position x\tA/D -> position y\tQ/E -> orientation z" <<
+          "\nI/O -> knee joints\tK/L -> ankle joints\tC -> enter command input");
 
-      std::cout << "Position: " <<
-        position.x << " " <<
-        position.y << " " <<
-        position.z << std::endl;
-
-      std::cout << "Orientation: " <<
-        orientation.x << " " <<
-        orientation.y << " " <<
-        orientation.z << std::endl;
-
-      std::cout << std::endl;
-
-      std::cout << "Left Joints: " <<
-        joints.left_knee << " " <<
-        joints.left_ankle << std::endl;
-
-      std::cout << "Right Joints: " <<
-        joints.right_knee << " " <<
-        joints.right_ankle << std::endl;
-
-      std::cout << std::endl;
-
-      std::cout << "Command: " << command << std::endl;
-
-      std::cout << std::endl;
-
-      if (input_command) {
-        std::cout << "Enter -> Admit command input" << std::endl;
-      } else {
-        std::cout << "W/S -> position x" << std::endl;
-        std::cout << "A/D -> position y" << std::endl;
-        std::cout << "Q/E -> orientation z" << std::endl;
-        std::cout << "O/P -> knee joints" << std::endl;
-        std::cout << "K/L -> ankle joints" << std::endl;
-        std::cout << "I -> enter command input" << std::endl;
-      }
+        // Set new data
+        legs_provider->set_position(position);
+        legs_provider->set_orientation(orientation);
+        legs_provider->set_joints(joints);
+        legs_provider->set_command(command);
     });
 
   update_timer->reset();
