@@ -21,7 +21,9 @@
 #ifndef BEINE_INTERFACES__BEINE_INTERFACES_HPP_
 #define BEINE_INTERFACES__BEINE_INTERFACES_HPP_
 
+#include <beine_interfaces/msg/joints.hpp>
 #include <beine_interfaces/msg/orientation.hpp>
 #include <beine_interfaces/msg/position.hpp>
+#include <beine_interfaces/msg/stance.hpp>
 
 #endif  // BEINE_INTERFACES__BEINE_INTERFACES_HPP_

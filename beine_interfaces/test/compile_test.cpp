@@ -22,6 +22,8 @@
 #include <beine_interfaces/beine_interfaces.hpp>
 
 TEST(CompileTest, All) {
-  beine_interfaces::msg::Orientation orientation;
-  beine_interfaces::msg::Position position;
+  beine_interfaces::msg::Joints();
+  beine_interfaces::msg::Orientation();
+  beine_interfaces::msg::Position();
+  beine_interfaces::msg::Stance();
 }
