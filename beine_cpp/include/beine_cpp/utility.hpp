@@ -18,12 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__BEINE_CPP_HPP_
-#define BEINE_CPP__BEINE_CPP_HPP_
+#ifndef BEINE_CPP__UTILITY_HPP_
+#define BEINE_CPP__UTILITY_HPP_
 
-#include "./legs/legs_consumer.hpp"
-#include "./legs/legs_provider.hpp"
+#include <beine_interfaces/beine_interfaces.hpp>
 
-#include "./utility.hpp"
+namespace beine_cpp
+{
 
-#endif  // BEINE_CPP__BEINE_CPP_HPP_
+using Joints = beine_interfaces::msg::Joints;
+using Orientation = beine_interfaces::msg::Orientation;
+using Position = beine_interfaces::msg::Position;
+using Stance = beine_interfaces::msg::Stance;
+
+}  // namespace beine_cpp
+
+#endif  // BEINE_CPP__UTILITY_HPP_

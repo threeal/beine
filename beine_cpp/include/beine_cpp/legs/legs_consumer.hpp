@@ -22,15 +22,13 @@
 #define BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
-#include <beine_interfaces/beine_interfaces.hpp>
 
 #include <memory>
 
+#include "../utility.hpp"
+
 namespace beine_cpp
 {
-
-using Orientation = beine_interfaces::msg::Orientation;
-using Position = beine_interfaces::msg::Position;
 
 class LegsConsumer
 {
@@ -44,15 +42,18 @@ public:
 
   inline const Position & get_position();
   inline const Orientation & get_orientation();
+  inline const Joints & get_joints();
 
 private:
   rclcpp::Node::SharedPtr node;
 
   rclcpp::Subscription<Position>::SharedPtr position_subscription;
   rclcpp::Subscription<Orientation>::SharedPtr orientation_subscription;
+  rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
 
   Position current_position;
   Orientation current_orientation;
+  Joints current_joints;
 };
 
 LegsConsumer::LegsConsumer()
@@ -97,6 +98,20 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
       "Orientation subscription initialized on " <<
         orientation_subscription->get_topic_name() << "!");
   }
+
+  // Initialize the joints subscription
+  {
+    joints_subscription = get_node()->create_subscription<Joints>(
+      "/legs/joints", 10,
+      [this](const Joints::SharedPtr joints) {
+        current_joints = *joints;
+      });
+
+    RCLCPP_INFO_STREAM(
+      get_node()->get_logger(),
+      "Joints subscription initialized on " <<
+        joints_subscription->get_topic_name() << "!");
+  }
 }
 
 rclcpp::Node::SharedPtr LegsConsumer::get_node()
@@ -112,6 +127,11 @@ const Position & LegsConsumer::get_position()
 const Orientation & LegsConsumer::get_orientation()
 {
   return current_orientation;
+}
+
+const Joints & LegsConsumer::get_joints()
+{
+  return current_joints;
 }
 
 }  // namespace beine_cpp
