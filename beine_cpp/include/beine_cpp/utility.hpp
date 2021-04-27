@@ -21,6 +21,7 @@
 #ifndef BEINE_CPP__UTILITY_HPP_
 #define BEINE_CPP__UTILITY_HPP_
 
+#include <std_msgs/msg/string.hpp>
 #include <beine_interfaces/beine_interfaces.hpp>
 
 namespace beine_cpp
@@ -30,6 +31,7 @@ using Joints = beine_interfaces::msg::Joints;
 using Orientation = beine_interfaces::msg::Orientation;
 using Position = beine_interfaces::msg::Position;
 using Stance = beine_interfaces::msg::Stance;
+using StringMsg = std_msgs::msg::String;
 
 }  // namespace beine_cpp
 

@@ -24,6 +24,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <memory>
+#include <string>
 
 #include "../utility.hpp"
 
@@ -41,6 +42,7 @@ public:
   inline void set_position(const Position & position);
   inline void set_orientation(const Orientation & orientation);
   inline void set_joints(const Joints & joints);
+  inline void set_command(const std::string & command);
 
   inline rclcpp::Node::SharedPtr get_node();
 
@@ -50,6 +52,7 @@ private:
   rclcpp::Publisher<Position>::SharedPtr position_publisher;
   rclcpp::Publisher<Orientation>::SharedPtr orientation_publisher;
   rclcpp::Publisher<Joints>::SharedPtr joints_publisher;
+  rclcpp::Publisher<StringMsg>::SharedPtr command_publisher;
 };
 
 LegsProvider::LegsProvider()
@@ -113,6 +116,14 @@ void LegsProvider::set_orientation(const Orientation & orientation)
 void LegsProvider::set_joints(const Joints & joints)
 {
   joints_publisher->publish(joints);
+}
+
+void LegsProvider::set_command(const std::string & command)
+{
+  StringMsg msg;
+  msg.data = command;
+
+  command_publisher->publish(msg);
 }
 
 rclcpp::Node::SharedPtr LegsProvider::get_node()

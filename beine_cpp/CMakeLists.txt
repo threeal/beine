@@ -17,6 +17,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(beine_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
@@ -31,12 +32,13 @@ if(BUILD_TESTING)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 
-  ament_target_dependencies(${PROJECT_NAME}_tests beine_interfaces rclcpp)
+  ament_target_dependencies(${PROJECT_NAME}_tests
+    beine_interfaces rclcpp std_msgs)
 
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_dependencies(beine_interfaces rclcpp)
+ament_export_dependencies(beine_interfaces rclcpp std_msgs)
 ament_export_include_directories("include")
 
 ament_package()
