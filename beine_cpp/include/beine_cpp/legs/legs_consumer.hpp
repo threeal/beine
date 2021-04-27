@@ -39,24 +39,24 @@ public:
 
   inline void set_node(rclcpp::Node::SharedPtr node);
 
-  inline rclcpp::Node::SharedPtr get_node();
+  inline rclcpp::Node::SharedPtr get_node() const;
 
-  inline const Position & get_position();
-  inline const Orientation & get_orientation();
-  inline const Joints & get_joints();
-  inline const std::string & get_command();
+  inline const Position & get_position() const;
+  inline const Orientation & get_orientation() const;
+  inline const Stance & get_stance() const;
+  inline const std::string & get_command() const;
 
 private:
   rclcpp::Node::SharedPtr node;
 
   rclcpp::Subscription<Position>::SharedPtr position_subscription;
   rclcpp::Subscription<Orientation>::SharedPtr orientation_subscription;
-  rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
+  rclcpp::Subscription<StanceMsg>::SharedPtr stance_subscription;
   rclcpp::Subscription<StringMsg>::SharedPtr command_subscription;
 
   Position current_position;
   Orientation current_orientation;
-  Joints current_joints;
+  Stance current_stance;
   std::string current_command;
 };
 
@@ -103,18 +103,18 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
         orientation_subscription->get_topic_name() << "!");
   }
 
-  // Initialize the joints subscription
+  // Initialize the stance subscription
   {
-    joints_subscription = get_node()->create_subscription<Joints>(
-      "/legs/joints", 10,
-      [this](const Joints::SharedPtr joints) {
-        current_joints = *joints;
+    stance_subscription = get_node()->create_subscription<StanceMsg>(
+      "/legs/stance", 10,
+      [this](const StanceMsg::SharedPtr msg) {
+        current_stance = *msg;
       });
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
-      "Joints subscription initialized on " <<
-        joints_subscription->get_topic_name() << "!");
+      "Stance subscription initialized on " <<
+        stance_subscription->get_topic_name() << "!");
   }
 
   // Initialize the command subscription
@@ -132,27 +132,27 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
   }
 }
 
-rclcpp::Node::SharedPtr LegsConsumer::get_node()
+rclcpp::Node::SharedPtr LegsConsumer::get_node() const
 {
   return node;
 }
 
-const Position & LegsConsumer::get_position()
+const Position & LegsConsumer::get_position() const
 {
   return current_position;
 }
 
-const Orientation & LegsConsumer::get_orientation()
+const Orientation & LegsConsumer::get_orientation() const
 {
   return current_orientation;
 }
 
-const Joints & LegsConsumer::get_joints()
+const Stance & LegsConsumer::get_stance() const
 {
-  return current_joints;
+  return current_stance;
 }
 
-const std::string & LegsConsumer::get_command()
+const std::string & LegsConsumer::get_command() const
 {
   return current_command;
 }

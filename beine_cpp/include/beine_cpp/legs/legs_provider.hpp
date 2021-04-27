@@ -44,7 +44,7 @@ public:
   inline void set_joints(const Joints & joints);
   inline void set_command(const std::string & command);
 
-  inline rclcpp::Node::SharedPtr get_node();
+  inline rclcpp::Node::SharedPtr get_node() const;
 
 private:
   rclcpp::Node::SharedPtr node;
@@ -126,7 +126,7 @@ void LegsProvider::set_command(const std::string & command)
   command_publisher->publish(msg);
 }
 
-rclcpp::Node::SharedPtr LegsProvider::get_node()
+rclcpp::Node::SharedPtr LegsProvider::get_node() const
 {
   return node;
 }

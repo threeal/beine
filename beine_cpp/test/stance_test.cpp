@@ -18,13 +18,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__BEINE_CPP_HPP_
-#define BEINE_CPP__BEINE_CPP_HPP_
+#include <gtest/gtest.h>
+#include <beine_cpp/beine_cpp.hpp>
 
-#include "./legs/legs_consumer.hpp"
-#include "./legs/legs_provider.hpp"
-#include "./legs/stance_provider.hpp"
+TEST(StanceTest, DefaultStanding) {
+  beine_cpp::Stance stance;
 
-#include "./utility.hpp"
+  ASSERT_TRUE(stance.is_standing());
+}
 
-#endif  // BEINE_CPP__BEINE_CPP_HPP_
+TEST(StanceTest, MsgDefaultStanding) {
+  beine_cpp::StanceMsg msg;
+
+  ASSERT_FALSE(msg.sitting);
+}
+
+TEST(StanceTest, FromMsg) {
+  beine_cpp::StanceMsg msg;
+  msg.sitting = true;
+
+  beine_cpp::Stance stance = msg;
+  ASSERT_TRUE(stance.is_sitting());
+}
+
+TEST(StanceTest, ToMsg) {
+  beine_cpp::Stance stance;
+  stance.make_sitting();
+
+  beine_cpp::StanceMsg msg = stance;
+  ASSERT_TRUE(msg.sitting);
+}
