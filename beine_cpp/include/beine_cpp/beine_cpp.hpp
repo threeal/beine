@@ -21,10 +21,11 @@
 #ifndef BEINE_CPP__BEINE_CPP_HPP_
 #define BEINE_CPP__BEINE_CPP_HPP_
 
-#include "./legs/joints_consumer.hpp"
-#include "./legs/legs_consumer.hpp"
-#include "./legs/legs_provider.hpp"
-#include "./legs/stance_provider.hpp"
+#include "./consumer/joints_consumer.hpp"
+#include "./consumer/legs_consumer.hpp"
+
+#include "./provider/legs_provider.hpp"
+#include "./provider/stance_provider.hpp"
 
 #include "./utility.hpp"
 

@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
-#define BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
+#ifndef BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_
+#define BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -158,4 +158,4 @@ const std::string & LegsConsumer::get_command() const
 
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__LEGS_CONSUMER_HPP_
+#endif  // BEINE_CPP__CONSUMER__LEGS_CONSUMER_HPP_

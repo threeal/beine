@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
-#define BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#ifndef BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_
+#define BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -132,4 +132,4 @@ rclcpp::Node::SharedPtr LegsProvider::get_node() const
 
 }  // namespace beine_cpp
 
-#endif  // BEINE_CPP__LEGS__LEGS_PROVIDER_HPP_
+#endif  // BEINE_CPP__PROVIDER__LEGS_PROVIDER_HPP_
