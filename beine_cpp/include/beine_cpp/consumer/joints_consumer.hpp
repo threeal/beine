@@ -36,6 +36,8 @@ public:
 
   inline void set_node(rclcpp::Node::SharedPtr node);
 
+  inline void set_on_joints_changed(std::function<void(const Joints &)> callback);
+
   inline rclcpp::Node::SharedPtr get_node() const;
 
   inline const Joints & get_joints() const;
@@ -44,6 +46,8 @@ private:
   rclcpp::Node::SharedPtr node;
 
   rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
+
+  std::function<void(const Joints &)> on_joints_changed;
 
   Joints current_joints;
 };
@@ -69,12 +73,21 @@ void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
       "/legs/joints", 10,
       [this](const Joints::SharedPtr joints) {
         current_joints = *joints;
+
+        if (on_joints_changed) {
+          on_joints_changed(get_joints());
+        }
       });
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
       "Joints subscription initialized on " << joints_subscription->get_topic_name() << "!");
   }
+}
+
+void JointsConsumer::set_on_joints_changed(std::function<void(const Joints &)> callback)
+{
+  on_joints_changed = callback;
 }
 
 rclcpp::Node::SharedPtr JointsConsumer::get_node() const

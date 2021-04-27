@@ -24,6 +24,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <iomanip>
 #include <memory>
 #include <string>
@@ -101,23 +102,23 @@ int main(int argc, char ** argv)
               break;
 
             case 'O':
-              joints.left_knee -= 10.0;
-              joints.right_knee -= 10.0;
+              joints.left_knee = std::max(joints.left_knee - 10.0, 0.0);
+              joints.right_knee = std::max(joints.right_knee - 10.0, 0.0);
               break;
 
             case 'P':
-              joints.left_knee += 10.0;
-              joints.right_knee += 10.0;
+              joints.left_knee = std::min(joints.left_knee + 10.0, 180.0);
+              joints.right_knee = std::min(joints.right_knee + 10.0, 180.0);
               break;
 
             case 'K':
-              joints.left_ankle -= 10.0;
-              joints.right_ankle -= 10.0;
+              joints.left_ankle = std::max(joints.left_ankle - 10.0, 0.0);
+              joints.right_ankle = std::max(joints.right_ankle - 10.0, 0.0);
               break;
 
             case 'L':
-              joints.left_ankle += 10.0;
-              joints.right_ankle += 10.0;
+              joints.left_ankle = std::min(joints.left_ankle + 10.0, 90.0);
+              joints.right_ankle = std::min(joints.right_ankle + 10.0, 90.0);
               break;
 
             case 'I':
