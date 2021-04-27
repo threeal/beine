@@ -18,32 +18,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__UTILITY_HPP_
-#define BEINE_CPP__UTILITY_HPP_
+#include <beine_cpp/beine_cpp.hpp>
+#include <rclcpp/rclcpp.hpp>
 
-#include <std_msgs/msg/string.hpp>
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <iomanip>
+#include <memory>
+#include <string>
 
-#include "./utility/stance.hpp"
+using namespace std::chrono_literals;
 
-namespace beine_cpp
+int main(int argc, char ** argv)
 {
+  rclcpp::init(argc, argv);
 
-using Joints = beine_interfaces::msg::Joints;
-using Orientation = beine_interfaces::msg::Orientation;
-using Position = beine_interfaces::msg::Position;
-using StringMsg = std_msgs::msg::String;
+  auto node = std::make_shared<rclcpp::Node>("legs_consumer_log");
+  auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node);
 
-}  // namespace beine_cpp
+  RCLCPP_INFO(node->get_logger(), "Press enter to continue");
+  std::cin.get();
 
-inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation)
-{
-  return out << orientation.x << ", " << orientation.y << ", " << orientation.z;
+  auto update_timer = node->create_wall_timer(
+    100ms, [&]() {
+      // Clear screen
+      std::cout << "\033[2J\033[2H" << std::endl;
+
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        std::fixed << std::setprecision(1) <<
+          "\n\nPosition\t: " << legs_consumer->get_position() <<
+          "\nOrientation\t: " << legs_consumer->get_orientation() <<
+          "\n\nStance\t: " << legs_consumer->get_stance() <<
+          "\nCommand\t: \"" << legs_consumer->get_command() << "\"");
+    });
+
+  update_timer->reset();
+
+  rclcpp::spin(node);
+
+  update_timer->cancel();
+
+  rclcpp::shutdown();
+
+  return 0;
 }
-
-inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position)
-{
-  return out << position.x << ", " << position.y << ", " << position.z;
-}
-
-#endif  // BEINE_CPP__UTILITY_HPP_

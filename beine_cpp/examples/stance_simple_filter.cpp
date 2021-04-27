@@ -18,32 +18,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__UTILITY_HPP_
-#define BEINE_CPP__UTILITY_HPP_
+#include <beine_cpp/beine_cpp.hpp>
+#include <rclcpp/rclcpp.hpp>
 
-#include <std_msgs/msg/string.hpp>
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <iomanip>
+#include <memory>
+#include <string>
 
-#include "./utility/stance.hpp"
+using namespace std::chrono_literals;
 
-namespace beine_cpp
+int main(int argc, char ** argv)
 {
+  rclcpp::init(argc, argv);
 
-using Joints = beine_interfaces::msg::Joints;
-using Orientation = beine_interfaces::msg::Orientation;
-using Position = beine_interfaces::msg::Position;
-using StringMsg = std_msgs::msg::String;
+  auto node = std::make_shared<rclcpp::Node>("stance_simple_filter");
+  auto joints_consumer = std::make_shared<beine_cpp::JointsConsumer>(node);
+  auto stance_provider = std::make_shared<beine_cpp::StanceProvider>(node);
 
-}  // namespace beine_cpp
+  beine_cpp::Stance prev_stance;
 
-inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation)
-{
-  return out << orientation.x << ", " << orientation.y << ", " << orientation.z;
+  joints_consumer->set_on_joints_changed(
+    [&](const beine_cpp::Joints & joints) {
+      beine_cpp::Stance stance;
+
+      if (joints.left_knee < 120.0 && joints.right_knee < 120.0 &&
+      joints.left_ankle < 60.0 && joints.right_ankle < 60.0)
+      {
+        stance.make_sitting();
+      } else {
+        stance.make_standing();
+      }
+
+      if (stance.get_state() != prev_stance.get_state()) {
+        prev_stance = stance;
+        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance << "!");
+      }
+
+      stance_provider->set_stance(stance);
+    });
+
+  rclcpp::spin(node);
+
+  rclcpp::shutdown();
+
+  return 0;
 }
-
-inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position)
-{
-  return out << position.x << ", " << position.y << ", " << position.z;
-}
-
-#endif  // BEINE_CPP__UTILITY_HPP_

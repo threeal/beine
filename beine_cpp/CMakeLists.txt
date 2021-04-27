@@ -21,6 +21,22 @@ find_package(std_msgs REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
+add_executable(legs_consumer_log "examples/legs_consumer_log.cpp")
+add_executable(legs_provider_dummy "examples/legs_provider_dummy.cpp")
+add_executable(stance_simple_filter "examples/stance_simple_filter.cpp")
+
+foreach(target legs_consumer_log legs_provider_dummy stance_simple_filter)
+  target_include_directories(${target} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+
+  ament_target_dependencies(${target}
+    beine_interfaces rclcpp std_msgs)
+
+  install(TARGETS ${target}
+    DESTINATION "lib/${PROJECT_NAME}")
+endforeach()
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
