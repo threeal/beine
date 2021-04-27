@@ -21,9 +21,9 @@ find_package(std_msgs REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
-add_executable(legs_consumer_log "bin/legs_consumer_log.cpp")
-add_executable(legs_provider_dummy "bin/legs_provider_dummy.cpp")
-add_executable(stance_simple_filter "bin/stance_simple_filter.cpp")
+add_executable(legs_consumer_log "examples/legs_consumer_log.cpp")
+add_executable(legs_provider_dummy "examples/legs_provider_dummy.cpp")
+add_executable(stance_simple_filter "examples/stance_simple_filter.cpp")
 
 foreach(target legs_consumer_log legs_provider_dummy stance_simple_filter)
   target_include_directories(${target} PUBLIC
