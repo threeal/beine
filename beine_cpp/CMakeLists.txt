@@ -16,6 +16,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(beine_interfaces REQUIRED)
+find_package(keisan REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
@@ -31,7 +32,7 @@ foreach(target legs_consumer_log legs_provider_dummy stance_simple_filter)
     $<INSTALL_INTERFACE:include>)
 
   ament_target_dependencies(${target}
-    beine_interfaces rclcpp std_msgs)
+    beine_interfaces keisan rclcpp std_msgs)
 
   install(TARGETS ${target}
     DESTINATION "lib/${PROJECT_NAME}")
@@ -55,7 +56,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_dependencies(beine_interfaces rclcpp std_msgs)
+ament_export_dependencies(beine_interfaces keisan rclcpp std_msgs)
 ament_export_include_directories("include")
 
 ament_package()

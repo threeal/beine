@@ -15,3 +15,4 @@ jobs:
         with:
           ros2-distro: foxy
           apt-packages: ros-foxy-std-msgs
+          external-repos: ichiro-its/keisan#v0.2.0
