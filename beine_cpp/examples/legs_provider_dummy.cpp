@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 #include <beine_cpp/beine_cpp.hpp>
+#include <keisan/keisan.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <termios.h>
@@ -74,29 +75,31 @@ int main(int argc, char ** argv)
       // Handle keyboard input
       char input;
       while (read(STDIN, &input, 1) > 0) {
+        keisan::Point2 velocity;
+
         switch (toupper(input)) {
           case 'W':
-            position.x += 0.1;
+            velocity.x += 0.25;
             break;
 
           case 'S':
-            position.x -= 0.1;
+            velocity.x -= 0.25;
             break;
 
           case 'A':
-            position.y += 0.1;
+            velocity.y += 0.25;
             break;
 
           case 'D':
-            position.y -= 0.1;
+            velocity.y -= 0.25;
             break;
 
           case 'Q':
-            orientation.z += 10.0;
+            orientation.z += 30.0;
             break;
 
           case 'E':
-            orientation.z -= 10.0;
+            orientation.z -= 30.0;
             break;
 
           case 'I':
@@ -129,6 +132,14 @@ int main(int argc, char ** argv)
             tcsetattr(STDIN, TCSANOW, &nonblock_term);
             break;
         }
+
+        // Set position according to the velocity and current orientation
+        {
+          auto angle = keisan::deg_to_rad(orientation.z);
+
+          position.x += velocity.x * cos(angle) - velocity.y * sin(angle);
+          position.y += velocity.x * sin(angle) + velocity.y * cos(angle);
+        }
       }
 
       // Restore the terminal configuration
@@ -145,7 +156,7 @@ int main(int argc, char ** argv)
           "\n\nAnkle Joints\t: " << joints.left_knee << " " << joints.right_knee <<
           "\nKnee Joints\t: " << joints.left_ankle << " " << joints.right_ankle <<
           "\n\nCommand\t: \"" << command << "\"" <<
-          "\n\nW/S -> position x\tA/D -> position y\tQ/E -> orientation z" <<
+          "\n\nW/S -> local position x\tA/D -> local position y\tQ/E -> orientation z" <<
           "\nI/O -> knee joints\tK/L -> ankle joints\tC -> enter command input");
 
       // Set new data
