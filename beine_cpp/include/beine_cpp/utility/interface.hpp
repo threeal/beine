@@ -18,12 +18,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_INTERFACES__BEINE_INTERFACES_HPP_
-#define BEINE_INTERFACES__BEINE_INTERFACES_HPP_
+#ifndef BEINE_CPP__UTILITY__INTERFACE_HPP_
+#define BEINE_CPP__UTILITY__INTERFACE_HPP_
 
 #include <beine_interfaces/msg/joints.hpp>
 #include <beine_interfaces/msg/orientation.hpp>
 #include <beine_interfaces/msg/position.hpp>
-#include <beine_interfaces/msg/stance.hpp>
+#include <std_msgs/msg/string.hpp>
 
-#endif  // BEINE_INTERFACES__BEINE_INTERFACES_HPP_
+namespace beine_cpp
+{
+
+using StringMsg = std_msgs::msg::String;
+
+using beine_interfaces::msg::Joints;
+using beine_interfaces::msg::Orientation;
+using beine_interfaces::msg::Position;
+
+}  // namespace beine_cpp
+
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation);
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position);
+
+#endif  // BEINE_CPP__UTILITY__INTERFACE_HPP_

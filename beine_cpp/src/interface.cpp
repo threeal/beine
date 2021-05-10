@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Alfi Maulana
+// Copyright (c) 2021 ICHIRO ITS
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,12 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <gtest/gtest.h>
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <beine_cpp/utility/interface.hpp>
 
-TEST(CompileTest, All) {
-  beine_interfaces::msg::Joints();
-  beine_interfaces::msg::Orientation();
-  beine_interfaces::msg::Position();
-  beine_interfaces::msg::Stance();
+#include <iostream>
+
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation)
+{
+  return out << orientation.x << ", " << orientation.y << ", " << orientation.z;
+}
+
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position)
+{
+  return out << position.x << ", " << position.y << ", " << position.z;
 }

@@ -21,7 +21,7 @@
 #ifndef BEINE_CPP__UTILITY__STANCE_HPP_
 #define BEINE_CPP__UTILITY__STANCE_HPP_
 
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <beine_interfaces/msg/stance.hpp>
 
 namespace beine_cpp
 {

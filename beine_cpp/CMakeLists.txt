@@ -22,18 +22,27 @@ find_package(std_msgs REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
+add_library(${PROJECT_NAME}
+  "src/interface.cpp")
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+ament_target_dependencies(${PROJECT_NAME} beine_interfaces keisan rclcpp std_msgs)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION "lib"
+  LIBRARY DESTINATION "lib"
+  RUNTIME DESTINATION "bin")
+
 add_executable(legs_consumer_log "examples/legs_consumer_log.cpp")
 add_executable(legs_provider_dummy "examples/legs_provider_dummy.cpp")
 add_executable(stance_simple_filter "examples/stance_simple_filter.cpp")
 
 foreach(target legs_consumer_log legs_provider_dummy stance_simple_filter)
-  target_include_directories(${target} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
-
-  ament_target_dependencies(${target}
-    beine_interfaces keisan rclcpp std_msgs)
-
+  target_link_libraries(${target} ${PROJECT_NAME})
   install(TARGETS ${target}
     DESTINATION "lib/${PROJECT_NAME}")
 endforeach()
@@ -46,17 +55,13 @@ if(BUILD_TESTING)
     "test/compile_test.cpp"
     "test/stance_test.cpp")
 
-  target_include_directories(${PROJECT_NAME}_tests PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
-
-  ament_target_dependencies(${PROJECT_NAME}_tests
-    beine_interfaces rclcpp std_msgs)
+  target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME})
 
   ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_export_dependencies(beine_interfaces keisan rclcpp std_msgs)
 ament_export_include_directories("include")
+ament_export_libraries(${PROJECT_NAME})
 
 ament_package()
