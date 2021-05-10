@@ -55,7 +55,7 @@ JointsConsumer::JointsConsumer(
   // Initialize the joints subscription
   {
     joints_subscription = get_node()->create_subscription<Joints>(
-      "/legs/joints", 10,
+      get_legs_prefix() + JOINTS_SUFFIX, 10,
       [this](const Joints::SharedPtr msg) {
         current_joints = *msg;
 

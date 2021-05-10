@@ -63,7 +63,8 @@ LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Opt
 {
   // Initialize the position publisher
   {
-    position_publisher = get_node()->create_publisher<Position>("/legs/position", 10);
+    position_publisher = get_node()->create_publisher<Position>(
+      get_legs_prefix() + POSITION_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -72,7 +73,8 @@ LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Opt
 
   // Initialize the orientation publisher
   {
-    orientation_publisher = get_node()->create_publisher<Orientation>("/legs/orientation", 10);
+    orientation_publisher = get_node()->create_publisher<Orientation>(
+      get_legs_prefix() + ORIENTATION_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -81,7 +83,8 @@ LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Opt
 
   // Initialize the joints publisher
   {
-    joints_publisher = get_node()->create_publisher<Joints>("/legs/joints", 10);
+    joints_publisher = get_node()->create_publisher<Joints>(
+      get_legs_prefix() + JOINTS_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -90,7 +93,8 @@ LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Opt
 
   // Initialize the command publisher
   {
-    command_publisher = get_node()->create_publisher<StringMsg>("/legs/command", 10);
+    command_publisher = get_node()->create_publisher<StringMsg>(
+      get_legs_prefix() + COMMAND_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),

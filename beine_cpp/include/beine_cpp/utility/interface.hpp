@@ -35,6 +35,12 @@ using beine_interfaces::msg::Joints;
 using beine_interfaces::msg::Orientation;
 using beine_interfaces::msg::Position;
 
+extern const char * COMMAND_SUFFIX;
+extern const char * JOINTS_SUFFIX;
+extern const char * ORIENTATION_SUFFIX;
+extern const char * POSITION_SUFFIX;
+extern const char * STANCE_SUFFIX;
+
 }  // namespace beine_cpp
 
 std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation);

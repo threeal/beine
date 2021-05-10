@@ -50,7 +50,8 @@ StanceProvider::StanceProvider(
 {
   // Initialize the stance publisher
   {
-    stance_publisher = get_node()->create_publisher<StanceMsg>("/legs/stance", 10);
+    stance_publisher = get_node()->create_publisher<StanceMsg>(
+      get_legs_prefix() + STANCE_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),

@@ -74,7 +74,7 @@ LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Opt
   // Initialize the position subscription
   {
     position_subscription = get_node()->create_subscription<Position>(
-      "/legs/position", 10,
+      get_legs_prefix() + POSITION_SUFFIX, 10,
       [this](const Position::SharedPtr msg) {
         current_position = *msg;
 
@@ -91,7 +91,7 @@ LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Opt
   // Initialize the orientation subscription
   {
     orientation_subscription = get_node()->create_subscription<Orientation>(
-      "/legs/orientation", 10,
+      get_legs_prefix() + ORIENTATION_SUFFIX, 10,
       [this](const Orientation::SharedPtr msg) {
         current_orientation = *msg;
 
@@ -109,7 +109,7 @@ LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Opt
   // Initialize the stance subscription
   {
     stance_subscription = get_node()->create_subscription<StanceMsg>(
-      "/legs/stance", 10,
+      get_legs_prefix() + STANCE_SUFFIX, 10,
       [this](const StanceMsg::SharedPtr msg) {
         current_stance = Stance(*msg);
 
@@ -126,7 +126,7 @@ LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Opt
   // Initialize the command subscription
   {
     command_subscription = get_node()->create_subscription<StringMsg>(
-      "/legs/command", 10,
+      get_legs_prefix() + COMMAND_SUFFIX, 10,
       [this](const StringMsg::SharedPtr msg) {
         current_command = msg->data;
 
