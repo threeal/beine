@@ -60,7 +60,6 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
 
   ament_add_gtest(${PROJECT_NAME}_tests
-    "test/compile_test.cpp"
     "test/stance_test.cpp")
 
   target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME})
