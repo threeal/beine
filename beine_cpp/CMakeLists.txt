@@ -40,11 +40,11 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION "lib"
   RUNTIME DESTINATION "bin")
 
-add_executable(legs_consumer_log "examples/legs_consumer_log.cpp")
-add_executable(legs_provider_dummy "examples/legs_provider_dummy.cpp")
-add_executable(stance_simple_filter "examples/stance_simple_filter.cpp")
+add_executable(legs_logger "examples/legs_logger.cpp")
+add_executable(legs_teleop "examples/legs_teleop.cpp")
+add_executable(simple_stance_filter "examples/simple_stance_filter.cpp")
 
-foreach(target legs_consumer_log legs_provider_dummy stance_simple_filter)
+foreach(target legs_logger legs_teleop simple_stance_filter)
   target_link_libraries(${target} ${PROJECT_NAME})
   install(TARGETS ${target}
     DESTINATION "lib/${PROJECT_NAME}")

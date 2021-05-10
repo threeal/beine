@@ -23,49 +23,23 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <iomanip>
+#include <iostream>
 #include <memory>
 #include <string>
 
 using namespace std::chrono_literals;
 
-struct Options : public virtual beine_cpp::JointsConsumer::Options,
-  public virtual beine_cpp::StanceProvider::Options
-{
-  double knee_angle;
-  double ankle_angle;
-
-  Options()
-  : knee_angle(120.0),
-    ankle_angle(60.0)
-  {
-  }
-};
-
 int main(int argc, char ** argv)
 {
-  auto program = argparse::ArgumentParser("stance_simple_filter", "0.1.0");
+  auto program = argparse::ArgumentParser("legs_logger", "0.1.0");
 
-  Options options;
+  beine_cpp::LegsConsumer::Options options;
 
   program.add_argument("--legs-prefix")
   .help("prefix name for legs's topics and services")
   .action(
     [&](const std::string & value) {
       options.legs_prefix = value;
-    });
-
-  program.add_argument("--knee-angle")
-  .help("knee angle breakpoint for sitting stance")
-  .action(
-    [&](const std::string & value) {
-      options.knee_angle = stod(value);
-    });
-
-  program.add_argument("--ankle-angle")
-  .help("ankle angle breakpoint for sitting stance")
-  .action(
-    [&](const std::string & value) {
-      options.ankle_angle = stod(value);
     });
 
   try {
@@ -78,29 +52,24 @@ int main(int argc, char ** argv)
 
   rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp::Node>("stance_simple_filter");
-  auto joints_consumer = std::make_shared<beine_cpp::JointsConsumer>(node, options);
-  auto stance_provider = std::make_shared<beine_cpp::StanceProvider>(node, options);
+  auto node = std::make_shared<rclcpp::Node>("legs_logger");
+  auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node, options);
 
-  joints_consumer->set_on_joints_changed(
-    [&](const beine_cpp::Joints & joints) {
-      beine_cpp::Stance stance;
+  RCLCPP_INFO(node->get_logger(), "Press enter to continue");
+  std::cin.get();
 
-      if (
-        joints.left_knee < options.knee_angle && joints.right_knee < options.knee_angle &&
-        joints.left_ankle < options.ankle_angle && joints.right_ankle < options.ankle_angle)
-      {
-        stance.make_sitting();
-      } else {
-        stance.make_standing();
-      }
+  auto update_timer = node->create_wall_timer(
+    100ms, [&]() {
+      // Clear screen
+      std::cout << "\033[2J\033[2H" << std::endl;
 
-      auto prev_stance = stance_provider->get_stance();
-      if (stance.get_state() != prev_stance.get_state()) {
-        stance_provider->set_stance(stance);
-
-        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance << "!");
-      }
+      RCLCPP_INFO_STREAM(
+        node->get_logger(),
+        std::fixed << std::setprecision(1) <<
+          "\n\nPosition\t: " << legs_consumer->get_position() <<
+          "\nOrientation\t: " << legs_consumer->get_orientation() <<
+          "\n\nStance\t: " << legs_consumer->get_stance() <<
+          "\nCommand\t: \"" << legs_consumer->get_command() << "\"");
     });
 
   rclcpp::spin(node);

@@ -37,7 +37,7 @@ using namespace std::chrono_literals;
 
 int main(int argc, char ** argv)
 {
-  auto program = argparse::ArgumentParser("legs_provider_dummy", "0.1.0");
+  auto program = argparse::ArgumentParser("legs_teleop", "0.1.0");
 
   beine_cpp::LegsProvider::Options options;
 
@@ -58,7 +58,7 @@ int main(int argc, char ** argv)
 
   rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp::Node>("legs_provider_dummy");
+  auto node = std::make_shared<rclcpp::Node>("legs_teleop");
   auto legs_provider = std::make_shared<beine_cpp::LegsProvider>(node, options);
 
   // Get the original terminal configuration
