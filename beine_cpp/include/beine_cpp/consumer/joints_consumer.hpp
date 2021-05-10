@@ -23,56 +23,41 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class JointsConsumer
+class JointsConsumer : public LegsNode
 {
 public:
-  inline JointsConsumer();
-  inline explicit JointsConsumer(rclcpp::Node::SharedPtr node);
+  using JointsCallback = std::function<void (const Joints & joints)>;
 
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  inline explicit JointsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_on_joints_changed(std::function<void(const Joints &)> callback);
-
-  inline rclcpp::Node::SharedPtr get_node() const;
+  inline void set_on_joints_changed(const JointsCallback & callback);
 
   inline const Joints & get_joints() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
 
-  std::function<void(const Joints &)> on_joints_changed;
+  JointsCallback on_joints_changed;
 
   Joints current_joints;
 };
 
-JointsConsumer::JointsConsumer()
+JointsConsumer::JointsConsumer(
+  rclcpp::Node::SharedPtr node, const JointsConsumer::Options & options)
+: LegsNode(node, options)
 {
-}
-
-JointsConsumer::JointsConsumer(rclcpp::Node::SharedPtr node)
-: JointsConsumer()
-{
-  set_node(node);
-}
-
-void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
-
   // Initialize the joints subscription
   {
     joints_subscription = get_node()->create_subscription<Joints>(
       "/legs/joints", 10,
-      [this](const Joints::SharedPtr joints) {
-        current_joints = *joints;
+      [this](const Joints::SharedPtr msg) {
+        current_joints = *msg;
 
         if (on_joints_changed) {
           on_joints_changed(get_joints());
@@ -85,14 +70,9 @@ void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
   }
 }
 
-void JointsConsumer::set_on_joints_changed(std::function<void(const Joints &)> callback)
+void JointsConsumer::set_on_joints_changed(const JointsCallback & callback)
 {
   on_joints_changed = callback;
-}
-
-rclcpp::Node::SharedPtr JointsConsumer::get_node() const
-{
-  return node;
 }
 
 const Joints & JointsConsumer::get_joints() const

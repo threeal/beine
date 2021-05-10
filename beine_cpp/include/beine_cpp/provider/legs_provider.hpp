@@ -25,50 +25,42 @@
 
 #include <string>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class LegsProvider
+class LegsProvider : public LegsNode
 {
 public:
-  inline LegsProvider();
-  inline explicit LegsProvider(rclcpp::Node::SharedPtr node);
-
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  inline explicit LegsProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
   inline void set_position(const Position & position);
   inline void set_orientation(const Orientation & orientation);
   inline void set_joints(const Joints & joints);
   inline void set_command(const std::string & command);
 
-  inline rclcpp::Node::SharedPtr get_node() const;
+  inline const Position & get_position() const;
+  inline const Orientation & get_orientation() const;
+  inline const Joints & get_joints() const;
+  inline const std::string & get_command() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Publisher<Position>::SharedPtr position_publisher;
   rclcpp::Publisher<Orientation>::SharedPtr orientation_publisher;
   rclcpp::Publisher<Joints>::SharedPtr joints_publisher;
   rclcpp::Publisher<StringMsg>::SharedPtr command_publisher;
+
+  Position current_position;
+  Orientation current_orientation;
+  Joints current_joints;
+  std::string current_command;
 };
 
-LegsProvider::LegsProvider()
+LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Options & options)
+: LegsNode(node, options)
 {
-}
-
-LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node)
-: LegsProvider()
-{
-  set_node(node);
-}
-
-void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
-
   // Initialize the position publisher
   {
     position_publisher = get_node()->create_publisher<Position>("/legs/position", 10);
@@ -104,35 +96,62 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
       get_node()->get_logger(),
       "Command publisher initialized on " << command_publisher->get_topic_name() << "!");
   }
+
+  // Initial data publish
+  set_position(get_position());
+  set_orientation(get_orientation());
+  set_joints(get_joints());
+  set_command(get_command());
 }
 
 void LegsProvider::set_position(const Position & position)
 {
-  position_publisher->publish(position);
+  current_position = position;
+  position_publisher->publish(get_position());
 }
 
 void LegsProvider::set_orientation(const Orientation & orientation)
 {
-  orientation_publisher->publish(orientation);
+  current_orientation = orientation;
+  orientation_publisher->publish(get_orientation());
 }
 
 void LegsProvider::set_joints(const Joints & joints)
 {
-  joints_publisher->publish(joints);
+  current_joints = joints;
+  joints_publisher->publish(get_joints());
 }
 
 void LegsProvider::set_command(const std::string & command)
 {
+  current_command = command;
+
   StringMsg msg;
-  msg.data = command;
+  msg.data = get_command();
 
   command_publisher->publish(msg);
 }
 
-rclcpp::Node::SharedPtr LegsProvider::get_node() const
+const Position & LegsProvider::get_position() const
 {
-  return node;
+  return current_position;
 }
+
+const Orientation & LegsProvider::get_orientation() const
+{
+  return current_orientation;
+}
+
+const Joints & LegsProvider::get_joints() const
+{
+  return current_joints;
+}
+
+const std::string & LegsProvider::get_command() const
+{
+  return current_command;
+}
+
 
 }  // namespace beine_cpp
 

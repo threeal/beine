@@ -23,44 +23,31 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class StanceProvider
+class StanceProvider : public LegsNode
 {
 public:
-  inline StanceProvider();
-  inline explicit StanceProvider(rclcpp::Node::SharedPtr node);
+  inline explicit StanceProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  inline void set_stance(const Stance & stance);
 
-  inline void set_stance(Stance stance);
-
-  inline rclcpp::Node::SharedPtr get_node();
+  inline const Stance & get_stance() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Publisher<StanceMsg>::SharedPtr stance_publisher;
+
+  Stance current_stance;
 };
 
-StanceProvider::StanceProvider()
+StanceProvider::StanceProvider(
+  rclcpp::Node::SharedPtr node, const StanceProvider::Options & options)
+: LegsNode(node, options)
 {
-}
-
-StanceProvider::StanceProvider(rclcpp::Node::SharedPtr node)
-: StanceProvider()
-{
-  set_node(node);
-}
-
-void StanceProvider::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
-
   // Initialize the stance publisher
   {
     stance_publisher = get_node()->create_publisher<StanceMsg>("/legs/stance", 10);
@@ -69,16 +56,20 @@ void StanceProvider::set_node(rclcpp::Node::SharedPtr node)
       get_node()->get_logger(),
       "Stance publisher initialized on " << stance_publisher->get_topic_name() << "!");
   }
+
+  // Initial data publish
+  set_stance(get_stance());
 }
 
-void StanceProvider::set_stance(Stance stance)
+void StanceProvider::set_stance(const Stance & stance)
 {
-  stance_publisher->publish(stance);
+  current_stance = stance;
+  stance_publisher->publish(get_stance());
 }
 
-rclcpp::Node::SharedPtr StanceProvider::get_node()
+const Stance & StanceProvider::get_stance() const
 {
-  return node;
+  return current_stance;
 }
 
 }  // namespace beine_cpp

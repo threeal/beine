@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Alfi Maulana
+// Copyright (c) 2021 ICHIRO ITS
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,28 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <gtest/gtest.h>
-#include <beine_cpp/beine_cpp.hpp>
-#include <rclcpp/rclcpp.hpp>
+#ifndef BEINE_CPP__NODE_HPP_
+#define BEINE_CPP__NODE_HPP_
 
-#include <memory>
+#include "./node/legs_node.hpp"
 
-TEST(CompileTest, Providers) {
-  try {
-    auto node = std::make_shared<rclcpp::Node>("compile_test");
-
-    std::make_shared<beine_cpp::LegsProvider>(node);
-    std::make_shared<beine_cpp::StanceProvider>(node);
-  } catch (...) {
-  }
-}
-
-TEST(CompileTest, Consumers) {
-  try {
-    auto node = std::make_shared<rclcpp::Node>("compile_test");
-
-    std::make_shared<beine_cpp::JointsConsumer>(node);
-    std::make_shared<beine_cpp::LegsConsumer>(node);
-  } catch (...) {
-  }
-}
+#endif  // BEINE_CPP__NODE_HPP_

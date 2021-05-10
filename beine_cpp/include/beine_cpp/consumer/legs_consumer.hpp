@@ -25,20 +25,26 @@
 
 #include <string>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class LegsConsumer
+class LegsConsumer : public LegsNode
 {
 public:
-  inline LegsConsumer();
-  inline explicit LegsConsumer(rclcpp::Node::SharedPtr node);
+  using PositionCallback = std::function<void (const Position &)>;
+  using OrientationCallback = std::function<void (const Orientation &)>;
+  using StanceCallback = std::function<void (const Stance &)>;
+  using CommandCallback = std::function<void (const std::string &)>;
 
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  inline explicit LegsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline rclcpp::Node::SharedPtr get_node() const;
+  inline void set_on_position_changed(const PositionCallback & callback);
+  inline void set_on_orientation_changed(const OrientationCallback & callback);
+  inline void set_on_stance_changed(const StanceCallback & callback);
+  inline void set_on_command_changed(const CommandCallback & callback);
 
   inline const Position & get_position() const;
   inline const Orientation & get_orientation() const;
@@ -46,12 +52,15 @@ public:
   inline const std::string & get_command() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Subscription<Position>::SharedPtr position_subscription;
   rclcpp::Subscription<Orientation>::SharedPtr orientation_subscription;
   rclcpp::Subscription<StanceMsg>::SharedPtr stance_subscription;
   rclcpp::Subscription<StringMsg>::SharedPtr command_subscription;
+
+  PositionCallback on_position_changed;
+  OrientationCallback on_orientation_changed;
+  StanceCallback on_stance_changed;
+  CommandCallback on_command_changed;
 
   Position current_position;
   Orientation current_orientation;
@@ -59,27 +68,19 @@ private:
   std::string current_command;
 };
 
-LegsConsumer::LegsConsumer()
+LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Options & options)
+: LegsNode(node, options)
 {
-}
-
-LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node)
-: LegsConsumer()
-{
-  set_node(node);
-}
-
-void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
-
   // Initialize the position subscription
   {
     position_subscription = get_node()->create_subscription<Position>(
       "/legs/position", 10,
-      [this](const Position::SharedPtr position) {
-        current_position = *position;
+      [this](const Position::SharedPtr msg) {
+        current_position = *msg;
+
+        if (on_position_changed) {
+          on_position_changed(get_position());
+        }
       });
 
     RCLCPP_INFO_STREAM(
@@ -91,8 +92,12 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
   {
     orientation_subscription = get_node()->create_subscription<Orientation>(
       "/legs/orientation", 10,
-      [this](const Orientation::SharedPtr orientation) {
-        current_orientation = *orientation;
+      [this](const Orientation::SharedPtr msg) {
+        current_orientation = *msg;
+
+        if (on_orientation_changed) {
+          on_orientation_changed(get_orientation());
+        }
       });
 
     RCLCPP_INFO_STREAM(
@@ -107,6 +112,10 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
       "/legs/stance", 10,
       [this](const StanceMsg::SharedPtr msg) {
         current_stance = Stance(*msg);
+
+        if (on_stance_changed) {
+          on_stance_changed(get_stance());
+        }
       });
 
     RCLCPP_INFO_STREAM(
@@ -120,6 +129,10 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
       "/legs/command", 10,
       [this](const StringMsg::SharedPtr msg) {
         current_command = msg->data;
+
+        if (on_command_changed) {
+          on_command_changed(get_command());
+        }
       });
 
     RCLCPP_INFO_STREAM(
@@ -128,9 +141,24 @@ void LegsConsumer::set_node(rclcpp::Node::SharedPtr node)
   }
 }
 
-rclcpp::Node::SharedPtr LegsConsumer::get_node() const
+void LegsConsumer::set_on_position_changed(const PositionCallback & callback)
 {
-  return node;
+  on_position_changed = callback;
+}
+
+void LegsConsumer::set_on_orientation_changed(const OrientationCallback & callback)
+{
+  on_orientation_changed = callback;
+}
+
+void LegsConsumer::set_on_stance_changed(const StanceCallback & callback)
+{
+  on_stance_changed = callback;
+}
+
+void LegsConsumer::set_on_command_changed(const CommandCallback & callback)
+{
+  on_command_changed = callback;
 }
 
 const Position & LegsConsumer::get_position() const

@@ -18,46 +18,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <beine_cpp/beine_cpp.hpp>
+#ifndef BEINE_CPP__NODE__LEGS_NODE_HPP_
+#define BEINE_CPP__NODE__LEGS_NODE_HPP_
+
 #include <rclcpp/rclcpp.hpp>
 
-#include <iomanip>
-#include <memory>
 #include <string>
 
-using namespace std::chrono_literals;
+#include "../utility.hpp"
 
-int main(int argc, char ** argv)
+namespace beine_cpp
 {
-  rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp::Node>("stance_simple_filter");
-  auto joints_consumer = std::make_shared<beine_cpp::JointsConsumer>(node);
-  auto stance_provider = std::make_shared<beine_cpp::StanceProvider>(node);
+class LegsNode
+{
+public:
+  struct Options
+  {
+  };
 
-  joints_consumer->set_on_joints_changed(
-    [&](const beine_cpp::Joints & joints) {
-      beine_cpp::Stance stance;
+  inline explicit LegsNode(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-      if (joints.left_knee < 120.0 && joints.right_knee < 120.0 &&
-      joints.left_ankle < 60.0 && joints.right_ankle < 60.0)
-      {
-        stance.make_sitting();
-      } else {
-        stance.make_standing();
-      }
+  inline rclcpp::Node::SharedPtr get_node() const;
 
-      auto prev_stance = stance_provider->get_stance();
-      if (stance.get_state() != prev_stance.get_state()) {
-        stance_provider->set_stance(stance);
+private:
+  rclcpp::Node::SharedPtr node;
+};
 
-        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance << "!");
-      }
-    });
-
-  rclcpp::spin(node);
-
-  rclcpp::shutdown();
-
-  return 0;
+LegsNode::LegsNode(rclcpp::Node::SharedPtr node, const LegsNode::Options & /*options*/)
+: node(node)
+{
 }
+
+rclcpp::Node::SharedPtr LegsNode::get_node() const
+{
+  return node;
+}
+
+}  // namespace beine_cpp
+
+#endif  // BEINE_CPP__NODE__LEGS_NODE_HPP_
