@@ -24,8 +24,13 @@ find_package(std_msgs REQUIRED)
 install(DIRECTORY "include" DESTINATION ".")
 
 add_library(${PROJECT_NAME}
-  "src/interface.cpp"
-  "src/stance.cpp")
+  "src/consumer/joints_consumer.cpp"
+  "src/consumer/legs_consumer.cpp"
+  "src/node/legs_node.cpp"
+  "src/provider/legs_provider.cpp"
+  "src/provider/stance_provider.cpp"
+  "src/utility/interface.cpp"
+  "src/utility/stance.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

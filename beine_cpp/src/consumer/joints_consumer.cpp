@@ -18,54 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
-#define BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
-
-#include <rclcpp/rclcpp.hpp>
-
-#include "../node.hpp"
-#include "../utility.hpp"
+#include <beine_cpp/consumer/joints_consumer.hpp>
 
 namespace beine_cpp
 {
 
-class StanceProvider : public LegsNode
+void JointsConsumer::set_on_joints_changed(const JointsCallback & callback)
 {
-public:
-  struct Options : public virtual LegsNode::Options
-  {
-  };
+  on_joints_changed = callback;
+}
 
-  inline explicit StanceProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
-
-  void set_stance(const Stance & stance);
-
-  const Stance & get_stance() const;
-
-private:
-  rclcpp::Publisher<StanceMsg>::SharedPtr stance_publisher;
-
-  Stance current_stance;
-};
-
-StanceProvider::StanceProvider(
-  rclcpp::Node::SharedPtr node, const StanceProvider::Options & options)
-: LegsNode(node, options)
+const Joints & JointsConsumer::get_joints() const
 {
-  // Initialize the stance publisher
-  {
-    stance_publisher = get_node()->create_publisher<StanceMsg>(
-      get_legs_prefix() + STANCE_SUFFIX, 10);
-
-    RCLCPP_INFO_STREAM(
-      get_node()->get_logger(),
-      "Stance publisher initialized on " << stance_publisher->get_topic_name() << "!");
-  }
-
-  // Initial data publish
-  set_stance(get_stance());
+  return current_joints;
 }
 
 }  // namespace beine_cpp
-
-#endif  // BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_

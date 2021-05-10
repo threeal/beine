@@ -40,15 +40,15 @@ public:
 
   inline explicit LegsProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_position(const Position & position);
-  inline void set_orientation(const Orientation & orientation);
-  inline void set_joints(const Joints & joints);
-  inline void set_command(const std::string & command);
+  void set_position(const Position & position);
+  void set_orientation(const Orientation & orientation);
+  void set_joints(const Joints & joints);
+  void set_command(const std::string & command);
 
-  inline const Position & get_position() const;
-  inline const Orientation & get_orientation() const;
-  inline const Joints & get_joints() const;
-  inline const std::string & get_command() const;
+  const Position & get_position() const;
+  const Orientation & get_orientation() const;
+  const Joints & get_joints() const;
+  const std::string & get_command() const;
 
 private:
   rclcpp::Publisher<Position>::SharedPtr position_publisher;
@@ -117,55 +117,6 @@ LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Opt
   set_joints(get_joints());
   set_command(get_command());
 }
-
-void LegsProvider::set_position(const Position & position)
-{
-  current_position = position;
-  position_publisher->publish(get_position());
-}
-
-void LegsProvider::set_orientation(const Orientation & orientation)
-{
-  current_orientation = orientation;
-  orientation_publisher->publish(get_orientation());
-}
-
-void LegsProvider::set_joints(const Joints & joints)
-{
-  current_joints = joints;
-  joints_publisher->publish(get_joints());
-}
-
-void LegsProvider::set_command(const std::string & command)
-{
-  current_command = command;
-
-  StringMsg msg;
-  msg.data = get_command();
-
-  command_publisher->publish(msg);
-}
-
-const Position & LegsProvider::get_position() const
-{
-  return current_position;
-}
-
-const Orientation & LegsProvider::get_orientation() const
-{
-  return current_orientation;
-}
-
-const Joints & LegsProvider::get_joints() const
-{
-  return current_joints;
-}
-
-const std::string & LegsProvider::get_command() const
-{
-  return current_command;
-}
-
 
 }  // namespace beine_cpp
 

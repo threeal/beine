@@ -18,54 +18,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
-#define BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
+#include <beine_cpp/provider/legs_provider.hpp>
 
-#include <rclcpp/rclcpp.hpp>
-
-#include "../node.hpp"
-#include "../utility.hpp"
+#include <string>
 
 namespace beine_cpp
 {
 
-class StanceProvider : public LegsNode
+void LegsProvider::set_position(const Position & position)
 {
-public:
-  struct Options : public virtual LegsNode::Options
-  {
-  };
+  current_position = position;
+  position_publisher->publish(get_position());
+}
 
-  inline explicit StanceProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
-
-  void set_stance(const Stance & stance);
-
-  const Stance & get_stance() const;
-
-private:
-  rclcpp::Publisher<StanceMsg>::SharedPtr stance_publisher;
-
-  Stance current_stance;
-};
-
-StanceProvider::StanceProvider(
-  rclcpp::Node::SharedPtr node, const StanceProvider::Options & options)
-: LegsNode(node, options)
+void LegsProvider::set_orientation(const Orientation & orientation)
 {
-  // Initialize the stance publisher
-  {
-    stance_publisher = get_node()->create_publisher<StanceMsg>(
-      get_legs_prefix() + STANCE_SUFFIX, 10);
+  current_orientation = orientation;
+  orientation_publisher->publish(get_orientation());
+}
 
-    RCLCPP_INFO_STREAM(
-      get_node()->get_logger(),
-      "Stance publisher initialized on " << stance_publisher->get_topic_name() << "!");
-  }
+void LegsProvider::set_joints(const Joints & joints)
+{
+  current_joints = joints;
+  joints_publisher->publish(get_joints());
+}
 
-  // Initial data publish
-  set_stance(get_stance());
+void LegsProvider::set_command(const std::string & command)
+{
+  current_command = command;
+
+  StringMsg msg;
+  msg.data = get_command();
+
+  command_publisher->publish(msg);
+}
+
+const Position & LegsProvider::get_position() const
+{
+  return current_position;
+}
+
+const Orientation & LegsProvider::get_orientation() const
+{
+  return current_orientation;
+}
+
+const Joints & LegsProvider::get_joints() const
+{
+  return current_joints;
+}
+
+const std::string & LegsProvider::get_command() const
+{
+  return current_command;
 }
 
 }  // namespace beine_cpp
-
-#endif  // BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_

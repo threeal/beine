@@ -40,9 +40,9 @@ public:
 
   inline explicit JointsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_on_joints_changed(const JointsCallback & callback);
+  void set_on_joints_changed(const JointsCallback & callback);
 
-  inline const Joints & get_joints() const;
+  const Joints & get_joints() const;
 
 private:
   rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
@@ -72,16 +72,6 @@ JointsConsumer::JointsConsumer(
       get_node()->get_logger(),
       "Joints subscription initialized on " << joints_subscription->get_topic_name() << "!");
   }
-}
-
-void JointsConsumer::set_on_joints_changed(const JointsCallback & callback)
-{
-  on_joints_changed = callback;
-}
-
-const Joints & JointsConsumer::get_joints() const
-{
-  return current_joints;
 }
 
 }  // namespace beine_cpp

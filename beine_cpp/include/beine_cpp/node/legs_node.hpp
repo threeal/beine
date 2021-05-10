@@ -37,39 +37,20 @@ public:
   {
     std::string legs_prefix;
 
-    Options()
-    : legs_prefix("/legs")
-    {
-    }
+    Options();
   };
 
-  inline explicit LegsNode(rclcpp::Node::SharedPtr node, const Options & options = Options());
+  explicit LegsNode(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline rclcpp::Node::SharedPtr get_node() const;
+  rclcpp::Node::SharedPtr get_node() const;
 
-  inline const std::string & get_legs_prefix() const;
+  const std::string & get_legs_prefix() const;
 
 private:
   rclcpp::Node::SharedPtr node;
 
   std::string legs_prefix;
 };
-
-LegsNode::LegsNode(rclcpp::Node::SharedPtr node, const LegsNode::Options & options)
-: node(node),
-  legs_prefix(options.legs_prefix)
-{
-}
-
-rclcpp::Node::SharedPtr LegsNode::get_node() const
-{
-  return node;
-}
-
-const std::string & LegsNode::get_legs_prefix() const
-{
-  return legs_prefix;
-}
 
 }  // namespace beine_cpp
 

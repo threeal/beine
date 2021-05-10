@@ -18,54 +18,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
-#define BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_
+#include <beine_cpp/consumer/legs_consumer.hpp>
 
-#include <rclcpp/rclcpp.hpp>
-
-#include "../node.hpp"
-#include "../utility.hpp"
+#include <string>
 
 namespace beine_cpp
 {
 
-class StanceProvider : public LegsNode
+void LegsConsumer::set_on_position_changed(const PositionCallback & callback)
 {
-public:
-  struct Options : public virtual LegsNode::Options
-  {
-  };
+  on_position_changed = callback;
+}
 
-  inline explicit StanceProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
-
-  void set_stance(const Stance & stance);
-
-  const Stance & get_stance() const;
-
-private:
-  rclcpp::Publisher<StanceMsg>::SharedPtr stance_publisher;
-
-  Stance current_stance;
-};
-
-StanceProvider::StanceProvider(
-  rclcpp::Node::SharedPtr node, const StanceProvider::Options & options)
-: LegsNode(node, options)
+void LegsConsumer::set_on_orientation_changed(const OrientationCallback & callback)
 {
-  // Initialize the stance publisher
-  {
-    stance_publisher = get_node()->create_publisher<StanceMsg>(
-      get_legs_prefix() + STANCE_SUFFIX, 10);
+  on_orientation_changed = callback;
+}
 
-    RCLCPP_INFO_STREAM(
-      get_node()->get_logger(),
-      "Stance publisher initialized on " << stance_publisher->get_topic_name() << "!");
-  }
+void LegsConsumer::set_on_stance_changed(const StanceCallback & callback)
+{
+  on_stance_changed = callback;
+}
 
-  // Initial data publish
-  set_stance(get_stance());
+void LegsConsumer::set_on_command_changed(const CommandCallback & callback)
+{
+  on_command_changed = callback;
+}
+
+const Position & LegsConsumer::get_position() const
+{
+  return current_position;
+}
+
+const Orientation & LegsConsumer::get_orientation() const
+{
+  return current_orientation;
+}
+
+const Stance & LegsConsumer::get_stance() const
+{
+  return current_stance;
+}
+
+const std::string & LegsConsumer::get_command() const
+{
+  return current_command;
 }
 
 }  // namespace beine_cpp
-
-#endif  // BEINE_CPP__PROVIDER__STANCE_PROVIDER_HPP_

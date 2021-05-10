@@ -45,15 +45,15 @@ public:
 
   inline explicit LegsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_on_position_changed(const PositionCallback & callback);
-  inline void set_on_orientation_changed(const OrientationCallback & callback);
-  inline void set_on_stance_changed(const StanceCallback & callback);
-  inline void set_on_command_changed(const CommandCallback & callback);
+  void set_on_position_changed(const PositionCallback & callback);
+  void set_on_orientation_changed(const OrientationCallback & callback);
+  void set_on_stance_changed(const StanceCallback & callback);
+  void set_on_command_changed(const CommandCallback & callback);
 
-  inline const Position & get_position() const;
-  inline const Orientation & get_orientation() const;
-  inline const Stance & get_stance() const;
-  inline const std::string & get_command() const;
+  const Position & get_position() const;
+  const Orientation & get_orientation() const;
+  const Stance & get_stance() const;
+  const std::string & get_command() const;
 
 private:
   rclcpp::Subscription<Position>::SharedPtr position_subscription;
@@ -143,46 +143,6 @@ LegsConsumer::LegsConsumer(rclcpp::Node::SharedPtr node, const LegsConsumer::Opt
       get_node()->get_logger(),
       "Command subscription initialized on " << command_subscription->get_topic_name() << "!");
   }
-}
-
-void LegsConsumer::set_on_position_changed(const PositionCallback & callback)
-{
-  on_position_changed = callback;
-}
-
-void LegsConsumer::set_on_orientation_changed(const OrientationCallback & callback)
-{
-  on_orientation_changed = callback;
-}
-
-void LegsConsumer::set_on_stance_changed(const StanceCallback & callback)
-{
-  on_stance_changed = callback;
-}
-
-void LegsConsumer::set_on_command_changed(const CommandCallback & callback)
-{
-  on_command_changed = callback;
-}
-
-const Position & LegsConsumer::get_position() const
-{
-  return current_position;
-}
-
-const Orientation & LegsConsumer::get_orientation() const
-{
-  return current_orientation;
-}
-
-const Stance & LegsConsumer::get_stance() const
-{
-  return current_stance;
-}
-
-const std::string & LegsConsumer::get_command() const
-{
-  return current_command;
 }
 
 }  // namespace beine_cpp
