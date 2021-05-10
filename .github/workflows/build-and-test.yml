@@ -14,5 +14,5 @@ jobs:
         uses: ichiro-its/ros2-ci@v1.0.0
         with:
           ros2-distro: foxy
-          pre-install: curl -s http://repository.ichiro-its.org/debian/setup.bash | bash -s
+          pre-install: wget -qO - http://repository.ichiro-its.org/debian/setup.bash | bash -s
           apt-packages: ros-foxy-std-msgs ros-foxy-keisan libargparse-dev
