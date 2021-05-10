@@ -39,6 +39,10 @@ public:
   using StanceCallback = std::function<void (const Stance &)>;
   using CommandCallback = std::function<void (const std::string &)>;
 
+  struct Options : public virtual LegsNode::Options
+  {
+  };
+
   inline explicit LegsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
   inline void set_on_position_changed(const PositionCallback & callback);

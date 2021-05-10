@@ -34,6 +34,10 @@ class JointsConsumer : public LegsNode
 public:
   using JointsCallback = std::function<void (const Joints & joints)>;
 
+  struct Options : public virtual LegsNode::Options
+  {
+  };
+
   inline explicit JointsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
   inline void set_on_joints_changed(const JointsCallback & callback);

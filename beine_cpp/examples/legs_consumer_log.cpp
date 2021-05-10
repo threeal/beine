@@ -18,10 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#include <argparse/argparse.hpp>
 #include <beine_cpp/beine_cpp.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <iomanip>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -29,10 +31,29 @@ using namespace std::chrono_literals;
 
 int main(int argc, char ** argv)
 {
+  auto program = argparse::ArgumentParser("legs_consumer_log", "0.1.0");
+
+  beine_cpp::LegsConsumer::Options options;
+
+  program.add_argument("--legs-prefix")
+  .help("prefix name for legs's topics and services")
+  .action(
+    [&](const std::string & value) {
+      options.legs_prefix = value;
+    });
+
+  try {
+    program.parse_args(argc, argv);
+  } catch (const std::runtime_error & err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
+    return 1;
+  }
+
   rclcpp::init(argc, argv);
 
   auto node = std::make_shared<rclcpp::Node>("legs_consumer_log");
-  auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node);
+  auto legs_consumer = std::make_shared<beine_cpp::LegsConsumer>(node, options);
 
   RCLCPP_INFO(node->get_logger(), "Press enter to continue");
   std::cin.get();
@@ -51,11 +72,7 @@ int main(int argc, char ** argv)
           "\nCommand\t: \"" << legs_consumer->get_command() << "\"");
     });
 
-  update_timer->reset();
-
   rclcpp::spin(node);
-
-  update_timer->cancel();
 
   rclcpp::shutdown();
 

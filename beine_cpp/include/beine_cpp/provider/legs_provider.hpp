@@ -34,6 +34,10 @@ namespace beine_cpp
 class LegsProvider : public LegsNode
 {
 public:
+  struct Options : public virtual LegsNode::Options
+  {
+  };
+
   inline explicit LegsProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
   inline void set_position(const Position & position);
@@ -61,6 +65,12 @@ private:
 LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Options & options)
 : LegsNode(node, options)
 {
+  // Initialize the joints value
+  current_joints.left_knee = 180.0;
+  current_joints.right_knee = 180.0;
+  current_joints.left_ankle = 90.0;
+  current_joints.right_ankle = 90.0;
+
   // Initialize the position publisher
   {
     position_publisher = get_node()->create_publisher<Position>(

@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#include <argparse/argparse.hpp>
 #include <beine_cpp/beine_cpp.hpp>
 #include <keisan/keisan.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -36,21 +37,29 @@ using namespace std::chrono_literals;
 
 int main(int argc, char ** argv)
 {
+  auto program = argparse::ArgumentParser("legs_provider_dummy", "0.1.0");
+
+  beine_cpp::LegsProvider::Options options;
+
+  program.add_argument("--legs-prefix")
+  .help("prefix name for legs's topics and services")
+  .action(
+    [&](const std::string & value) {
+      options.legs_prefix = value;
+    });
+
+  try {
+    program.parse_args(argc, argv);
+  } catch (const std::runtime_error & err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
+    return 1;
+  }
+
   rclcpp::init(argc, argv);
 
   auto node = std::make_shared<rclcpp::Node>("legs_provider_dummy");
-  auto legs_provider = std::make_shared<beine_cpp::LegsProvider>(node);
-
-  beine_cpp::Position position;
-  beine_cpp::Orientation orientation;
-
-  beine_cpp::Joints joints;
-  joints.left_knee = 180.0;
-  joints.right_knee = 180.0;
-  joints.left_ankle = 90.0;
-  joints.right_ankle = 90.0;
-
-  std::string command;
+  auto legs_provider = std::make_shared<beine_cpp::LegsProvider>(node, options);
 
   // Get the original terminal configuration
   struct termios original_term;
@@ -69,6 +78,11 @@ int main(int argc, char ** argv)
 
   auto update_timer = node->create_wall_timer(
     100ms, [&]() {
+      auto position = legs_provider->get_position();
+      auto orientation = legs_provider->get_orientation();
+      auto joints = legs_provider->get_joints();
+      auto command = legs_provider->get_command();
+
       // Modify the terminal configuration
       tcsetattr(STDIN, TCSANOW, &nonblock_term);
 
@@ -166,11 +180,7 @@ int main(int argc, char ** argv)
       legs_provider->set_command(command);
     });
 
-  update_timer->reset();
-
   rclcpp::spin(node);
-
-  update_timer->cancel();
 
   rclcpp::shutdown();
 

@@ -32,6 +32,10 @@ namespace beine_cpp
 class StanceProvider : public LegsNode
 {
 public:
+  struct Options : public virtual LegsNode::Options
+  {
+  };
+
   inline explicit StanceProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
   inline void set_stance(const Stance & stance);
