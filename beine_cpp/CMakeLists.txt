@@ -23,7 +23,8 @@ find_package(std_msgs REQUIRED)
 install(DIRECTORY "include" DESTINATION ".")
 
 add_library(${PROJECT_NAME}
-  "src/interface.cpp")
+  "src/interface.cpp"
+  "src/stance.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
