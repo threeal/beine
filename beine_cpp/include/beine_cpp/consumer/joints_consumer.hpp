@@ -23,56 +23,45 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class JointsConsumer
+class JointsConsumer : public LegsNode
 {
 public:
-  inline JointsConsumer();
-  inline explicit JointsConsumer(rclcpp::Node::SharedPtr node);
+  using JointsCallback = std::function<void (const Joints & joints)>;
 
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  struct Options : public virtual LegsNode::Options
+  {
+  };
 
-  inline void set_on_joints_changed(std::function<void(const Joints &)> callback);
+  inline explicit JointsConsumer(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline rclcpp::Node::SharedPtr get_node() const;
+  void set_on_joints_changed(const JointsCallback & callback);
 
-  inline const Joints & get_joints() const;
+  const Joints & get_joints() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Subscription<Joints>::SharedPtr joints_subscription;
 
-  std::function<void(const Joints &)> on_joints_changed;
+  JointsCallback on_joints_changed;
 
   Joints current_joints;
 };
 
-JointsConsumer::JointsConsumer()
+JointsConsumer::JointsConsumer(
+  rclcpp::Node::SharedPtr node, const JointsConsumer::Options & options)
+: LegsNode(node, options)
 {
-}
-
-JointsConsumer::JointsConsumer(rclcpp::Node::SharedPtr node)
-: JointsConsumer()
-{
-  set_node(node);
-}
-
-void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
-
   // Initialize the joints subscription
   {
     joints_subscription = get_node()->create_subscription<Joints>(
-      "/legs/joints", 10,
-      [this](const Joints::SharedPtr joints) {
-        current_joints = *joints;
+      get_legs_prefix() + JOINTS_SUFFIX, 10,
+      [this](const Joints::SharedPtr msg) {
+        current_joints = *msg;
 
         if (on_joints_changed) {
           on_joints_changed(get_joints());
@@ -83,21 +72,6 @@ void JointsConsumer::set_node(rclcpp::Node::SharedPtr node)
       get_node()->get_logger(),
       "Joints subscription initialized on " << joints_subscription->get_topic_name() << "!");
   }
-}
-
-void JointsConsumer::set_on_joints_changed(std::function<void(const Joints &)> callback)
-{
-  on_joints_changed = callback;
-}
-
-rclcpp::Node::SharedPtr JointsConsumer::get_node() const
-{
-  return node;
-}
-
-const Joints & JointsConsumer::get_joints() const
-{
-  return current_joints;
 }
 
 }  // namespace beine_cpp

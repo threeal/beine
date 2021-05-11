@@ -18,48 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <beine_cpp/beine_cpp.hpp>
-#include <rclcpp/rclcpp.hpp>
+#include <beine_cpp/consumer/joints_consumer.hpp>
 
-#include <iomanip>
-#include <memory>
-#include <string>
-
-using namespace std::chrono_literals;
-
-int main(int argc, char ** argv)
+namespace beine_cpp
 {
-  rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<rclcpp::Node>("stance_simple_filter");
-  auto joints_consumer = std::make_shared<beine_cpp::JointsConsumer>(node);
-  auto stance_provider = std::make_shared<beine_cpp::StanceProvider>(node);
-
-  beine_cpp::Stance prev_stance;
-
-  joints_consumer->set_on_joints_changed(
-    [&](const beine_cpp::Joints & joints) {
-      beine_cpp::Stance stance;
-
-      if (joints.left_knee < 120.0 && joints.right_knee < 120.0 &&
-      joints.left_ankle < 60.0 && joints.right_ankle < 60.0)
-      {
-        stance.make_sitting();
-      } else {
-        stance.make_standing();
-      }
-
-      if (stance.get_state() != prev_stance.get_state()) {
-        prev_stance = stance;
-        RCLCPP_INFO_STREAM(node->get_logger(), "Stance changed into " << stance << "!");
-      }
-
-      stance_provider->set_stance(stance);
-    });
-
-  rclcpp::spin(node);
-
-  rclcpp::shutdown();
-
-  return 0;
+void JointsConsumer::set_on_joints_changed(const JointsCallback & callback)
+{
+  on_joints_changed = callback;
 }
+
+const Joints & JointsConsumer::get_joints() const
+{
+  return current_joints;
+}
+
+}  // namespace beine_cpp

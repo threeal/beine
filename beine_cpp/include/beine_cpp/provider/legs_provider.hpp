@@ -25,53 +25,56 @@
 
 #include <string>
 
+#include "../node.hpp"
 #include "../utility.hpp"
 
 namespace beine_cpp
 {
 
-class LegsProvider
+class LegsProvider : public LegsNode
 {
 public:
-  inline LegsProvider();
-  inline explicit LegsProvider(rclcpp::Node::SharedPtr node);
+  struct Options : public virtual LegsNode::Options
+  {
+  };
 
-  inline void set_node(rclcpp::Node::SharedPtr node);
+  inline explicit LegsProvider(rclcpp::Node::SharedPtr node, const Options & options = Options());
 
-  inline void set_position(const Position & position);
-  inline void set_orientation(const Orientation & orientation);
-  inline void set_joints(const Joints & joints);
-  inline void set_command(const std::string & command);
+  void set_position(const Position & position);
+  void set_orientation(const Orientation & orientation);
+  void set_joints(const Joints & joints);
+  void set_command(const std::string & command);
 
-  inline rclcpp::Node::SharedPtr get_node() const;
+  const Position & get_position() const;
+  const Orientation & get_orientation() const;
+  const Joints & get_joints() const;
+  const std::string & get_command() const;
 
 private:
-  rclcpp::Node::SharedPtr node;
-
   rclcpp::Publisher<Position>::SharedPtr position_publisher;
   rclcpp::Publisher<Orientation>::SharedPtr orientation_publisher;
   rclcpp::Publisher<Joints>::SharedPtr joints_publisher;
   rclcpp::Publisher<StringMsg>::SharedPtr command_publisher;
+
+  Position current_position;
+  Orientation current_orientation;
+  Joints current_joints;
+  std::string current_command;
 };
 
-LegsProvider::LegsProvider()
+LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node, const LegsProvider::Options & options)
+: LegsNode(node, options)
 {
-}
-
-LegsProvider::LegsProvider(rclcpp::Node::SharedPtr node)
-: LegsProvider()
-{
-  set_node(node);
-}
-
-void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
-{
-  // Initialize the node
-  this->node = node;
+  // Initialize the joints value
+  current_joints.left_knee = 180.0;
+  current_joints.right_knee = 180.0;
+  current_joints.left_ankle = 90.0;
+  current_joints.right_ankle = 90.0;
 
   // Initialize the position publisher
   {
-    position_publisher = get_node()->create_publisher<Position>("/legs/position", 10);
+    position_publisher = get_node()->create_publisher<Position>(
+      get_legs_prefix() + POSITION_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -80,7 +83,8 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
 
   // Initialize the orientation publisher
   {
-    orientation_publisher = get_node()->create_publisher<Orientation>("/legs/orientation", 10);
+    orientation_publisher = get_node()->create_publisher<Orientation>(
+      get_legs_prefix() + ORIENTATION_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -89,7 +93,8 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
 
   // Initialize the joints publisher
   {
-    joints_publisher = get_node()->create_publisher<Joints>("/legs/joints", 10);
+    joints_publisher = get_node()->create_publisher<Joints>(
+      get_legs_prefix() + JOINTS_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
@@ -98,40 +103,19 @@ void LegsProvider::set_node(rclcpp::Node::SharedPtr node)
 
   // Initialize the command publisher
   {
-    command_publisher = get_node()->create_publisher<StringMsg>("/legs/command", 10);
+    command_publisher = get_node()->create_publisher<StringMsg>(
+      get_legs_prefix() + COMMAND_SUFFIX, 10);
 
     RCLCPP_INFO_STREAM(
       get_node()->get_logger(),
       "Command publisher initialized on " << command_publisher->get_topic_name() << "!");
   }
-}
 
-void LegsProvider::set_position(const Position & position)
-{
-  position_publisher->publish(position);
-}
-
-void LegsProvider::set_orientation(const Orientation & orientation)
-{
-  orientation_publisher->publish(orientation);
-}
-
-void LegsProvider::set_joints(const Joints & joints)
-{
-  joints_publisher->publish(joints);
-}
-
-void LegsProvider::set_command(const std::string & command)
-{
-  StringMsg msg;
-  msg.data = command;
-
-  command_publisher->publish(msg);
-}
-
-rclcpp::Node::SharedPtr LegsProvider::get_node() const
-{
-  return node;
+  // Initial data publish
+  set_position(get_position());
+  set_orientation(get_orientation());
+  set_joints(get_joints());
+  set_command(get_command());
 }
 
 }  // namespace beine_cpp

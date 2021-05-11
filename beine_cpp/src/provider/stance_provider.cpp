@@ -18,12 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <gtest/gtest.h>
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <beine_cpp/provider/stance_provider.hpp>
 
-TEST(CompileTest, All) {
-  beine_interfaces::msg::Joints();
-  beine_interfaces::msg::Orientation();
-  beine_interfaces::msg::Position();
-  beine_interfaces::msg::Stance();
+namespace beine_cpp
+{
+
+void StanceProvider::set_stance(const Stance & stance)
+{
+  current_stance = stance;
+  stance_publisher->publish(get_stance());
 }
+
+const Stance & StanceProvider::get_stance() const
+{
+  return current_stance;
+}
+
+}  // namespace beine_cpp

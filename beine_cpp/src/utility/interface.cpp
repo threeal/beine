@@ -18,12 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <gtest/gtest.h>
-#include <beine_cpp/beine_cpp.hpp>
+#include <beine_cpp/utility/interface.hpp>
 
-TEST(CompileTest, All) {
-  beine_cpp::JointsConsumer();
-  beine_cpp::LegsConsumer();
-  beine_cpp::LegsProvider();
-  beine_cpp::StanceProvider();
+#include <iostream>
+
+namespace beine_cpp
+{
+
+const char * COMMAND_SUFFIX = "/command";
+const char * JOINTS_SUFFIX = "/joints";
+const char * ORIENTATION_SUFFIX = "/orientation";
+const char * POSITION_SUFFIX = "/position";
+const char * STANCE_SUFFIX = "/stance";
+
+}  // namespace beine_cpp
+
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Orientation & orientation)
+{
+  return out << orientation.x << ", " << orientation.y << ", " << orientation.z;
+}
+
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Position & position)
+{
+  return out << position.x << ", " << position.y << ", " << position.z;
 }

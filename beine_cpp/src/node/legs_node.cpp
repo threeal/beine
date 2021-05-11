@@ -18,10 +18,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__UTILITY_HPP_
-#define BEINE_CPP__UTILITY_HPP_
+#include <beine_cpp/node/legs_node.hpp>
 
-#include "./utility/interface.hpp"
-#include "./utility/stance.hpp"
+#include <string>
 
-#endif  // BEINE_CPP__UTILITY_HPP_
+namespace beine_cpp
+{
+
+LegsNode::Options::Options()
+: legs_prefix("/legs")
+{
+}
+
+LegsNode::LegsNode(rclcpp::Node::SharedPtr node, const LegsNode::Options & options)
+: node(node),
+  legs_prefix(options.legs_prefix)
+{
+}
+
+rclcpp::Node::SharedPtr LegsNode::get_node() const
+{
+  return node;
+}
+
+const std::string & LegsNode::get_legs_prefix() const
+{
+  return legs_prefix;
+}
+
+}  // namespace beine_cpp

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Alfi Maulana
+// Copyright (c) 2021 ICHIRO ITS
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,12 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_INTERFACES__BEINE_INTERFACES_HPP_
-#define BEINE_INTERFACES__BEINE_INTERFACES_HPP_
+#ifndef BEINE_CPP__NODE_HPP_
+#define BEINE_CPP__NODE_HPP_
 
-#include <beine_interfaces/msg/joints.hpp>
-#include <beine_interfaces/msg/orientation.hpp>
-#include <beine_interfaces/msg/position.hpp>
-#include <beine_interfaces/msg/stance.hpp>
+#include "./node/legs_node.hpp"
 
-#endif  // BEINE_INTERFACES__BEINE_INTERFACES_HPP_
+#endif  // BEINE_CPP__NODE_HPP_

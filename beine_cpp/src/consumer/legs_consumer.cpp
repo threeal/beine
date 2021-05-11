@@ -18,10 +18,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef BEINE_CPP__UTILITY_HPP_
-#define BEINE_CPP__UTILITY_HPP_
+#include <beine_cpp/consumer/legs_consumer.hpp>
 
-#include "./utility/interface.hpp"
-#include "./utility/stance.hpp"
+#include <string>
 
-#endif  // BEINE_CPP__UTILITY_HPP_
+namespace beine_cpp
+{
+
+void LegsConsumer::set_on_position_changed(const PositionCallback & callback)
+{
+  on_position_changed = callback;
+}
+
+void LegsConsumer::set_on_orientation_changed(const OrientationCallback & callback)
+{
+  on_orientation_changed = callback;
+}
+
+void LegsConsumer::set_on_stance_changed(const StanceCallback & callback)
+{
+  on_stance_changed = callback;
+}
+
+void LegsConsumer::set_on_command_changed(const CommandCallback & callback)
+{
+  on_command_changed = callback;
+}
+
+const Position & LegsConsumer::get_position() const
+{
+  return current_position;
+}
+
+const Orientation & LegsConsumer::get_orientation() const
+{
+  return current_orientation;
+}
+
+const Stance & LegsConsumer::get_stance() const
+{
+  return current_stance;
+}
+
+const std::string & LegsConsumer::get_command() const
+{
+  return current_command;
+}
+
+}  // namespace beine_cpp

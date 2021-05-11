@@ -21,7 +21,7 @@
 #ifndef BEINE_CPP__UTILITY__STANCE_HPP_
 #define BEINE_CPP__UTILITY__STANCE_HPP_
 
-#include <beine_interfaces/beine_interfaces.hpp>
+#include <beine_interfaces/msg/stance.hpp>
 
 namespace beine_cpp
 {
@@ -37,101 +37,29 @@ public:
     SITTING
   };
 
-  inline Stance();
-  inline explicit Stance(const StanceMsg & msg);
+  Stance();
+  explicit Stance(const StanceMsg & msg);
 
-  inline operator StanceMsg() const;
+  operator StanceMsg() const;
 
-  inline void set_state(State state);
+  const Stance & operator=(const StanceMsg & msg);
 
-  inline void make_standing();
-  inline void make_sitting();
+  void set_state(State state);
 
-  inline State get_state() const;
+  void make_standing();
+  void make_sitting();
 
-  inline bool is_standing() const;
-  inline bool is_sitting() const;
+  State get_state() const;
+
+  bool is_standing() const;
+  bool is_sitting() const;
 
 private:
   State state;
 };
 
-Stance::Stance()
-: state(State::STANDING)
-{
-}
-
-Stance::Stance(const StanceMsg & msg)
-{
-  if (msg.sitting) {
-    set_state(State::SITTING);
-  } else {
-    set_state(State::STANDING);
-  }
-}
-
-Stance::operator StanceMsg() const
-{
-  StanceMsg msg;
-
-  switch (get_state()) {
-    case State::STANDING:
-      msg.sitting = false;
-      break;
-
-    case State::SITTING:
-      msg.sitting = true;
-      break;
-  }
-
-  return msg;
-}
-
-void Stance::set_state(Stance::State state)
-{
-  this->state = state;
-}
-
-void Stance::make_standing()
-{
-  set_state(State::STANDING);
-}
-
-void Stance::make_sitting()
-{
-  set_state(State::SITTING);
-}
-
-Stance::State Stance::get_state() const
-{
-  return state;
-}
-
-bool Stance::is_standing() const
-{
-  return get_state() == State::STANDING;
-}
-
-bool Stance::is_sitting() const
-{
-  return get_state() == State::SITTING;
-}
-
 }  // namespace beine_cpp
 
-inline std::ostream & operator<<(std::ostream & out, const beine_cpp::Stance & stance)
-{
-  switch (stance.get_state()) {
-    case beine_cpp::Stance::State::STANDING:
-      out << "Standing";
-      break;
-
-    case beine_cpp::Stance::State::SITTING:
-      out << "Sitting";
-      break;
-  }
-
-  return out;
-}
+std::ostream & operator<<(std::ostream & out, const beine_cpp::Stance & stance);
 
 #endif  // BEINE_CPP__UTILITY__STANCE_HPP_
