@@ -91,7 +91,7 @@ int main(int argc, char ** argv)
       // Handle keyboard input
       char input;
       while (read(STDIN, &input, 1) > 0) {
-        ksn::Point2 velocity;
+        auto velocity = ksn::Point2::zero();
 
         switch (toupper(input)) {
           case 'W':
