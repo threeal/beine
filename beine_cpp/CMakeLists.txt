@@ -23,7 +23,7 @@ find_package(std_msgs REQUIRED)
 
 install(DIRECTORY "include" DESTINATION ".")
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   "src/consumer/joints_consumer.cpp"
   "src/consumer/legs_consumer.cpp"
   "src/node/legs_node.cpp"

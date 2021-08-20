@@ -33,6 +33,8 @@
 
 #define STDIN 0
 
+namespace ksn = keisan;
+
 using namespace std::chrono_literals;
 
 int main(int argc, char ** argv)
@@ -89,7 +91,7 @@ int main(int argc, char ** argv)
       // Handle keyboard input
       char input;
       while (read(STDIN, &input, 1) > 0) {
-        keisan::Point2 velocity;
+        auto velocity = ksn::Point2::zero();
 
         switch (toupper(input)) {
           case 'W':
@@ -149,10 +151,11 @@ int main(int argc, char ** argv)
 
         // Set position according to the velocity and current orientation
         {
-          auto angle = keisan::deg_to_rad(orientation.z);
+          auto angle = ksn::make_degree(orientation.z);
+          auto rotated_velocity = velocity.rotate(angle);
 
-          position.x += velocity.x * cos(angle) - velocity.y * sin(angle);
-          position.y += velocity.x * sin(angle) + velocity.y * cos(angle);
+          position.x += rotated_velocity.x;
+          position.y += rotated_velocity.y;
         }
       }
 
